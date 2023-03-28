@@ -14,15 +14,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString(exclude = {"questionGroupList"})
 @Builder
-@Accessors(chain = true)
-//@ToString(exclude = {"roles"})
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class User {
+public class User extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,14 +30,6 @@ public class User {
 
     private String password;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @Builder.Default
-//    private List<Authority> roles;
-
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<QuestionGroup> questionGroupList;
 }

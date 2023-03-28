@@ -24,6 +24,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -40,12 +41,16 @@ public class SecurityConfig {
                 .cors(c -> {
                             CorsConfigurationSource source = request -> {
                                 CorsConfiguration config = new CorsConfiguration();
-                                config.setAllowedOrigins(
+                                config.setAllowedOriginPatterns(
                                         List.of("*")
                                 );
                                 config.setAllowedMethods(
                                         List.of("*")
                                 );
+//                                config.setAllowedOrigins(List.of("*"));
+//                                config.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT"));
+                                config.setAllowedHeaders(List.of("*"));
+                                config.setAllowCredentials(true);
                                 return config;
                             };
                             c.configurationSource(source);

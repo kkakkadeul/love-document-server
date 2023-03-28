@@ -31,7 +31,6 @@ public class UserApiLogicService {
             throw new NotFoundException();
         }
 
-        user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
 
        return response(user);
@@ -47,8 +46,6 @@ public class UserApiLogicService {
         User user = User.builder()
                     .nickname(request.getNickname())
                     .password(passwordEncoder.encode(request.getPassword()))
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(null)
                     .build();
 
         userRepository.save(user);
