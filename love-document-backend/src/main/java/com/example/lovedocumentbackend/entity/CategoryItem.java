@@ -11,17 +11,16 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
-@Accessors(chain = true)
-@ToString(exclude = {"category"})
+@ToString(exclude = {"category", "categoryItemExampleList"})
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@EntityListeners(AuditingEntityListener.class)
+@Getter
 @Entity
 @Table(name="category_item")
-public class CategoryItem {
+public class CategoryItem extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,14 +38,11 @@ public class CategoryItem {
     @Enumerated(EnumType.STRING)
     private QuestionType type;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
+    private List<CategoryItemExample> categoryItemExampleList;
 
 }

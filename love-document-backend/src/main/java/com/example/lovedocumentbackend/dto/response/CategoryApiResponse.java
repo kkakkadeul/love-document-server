@@ -23,8 +23,4 @@ public class CategoryApiResponse {
     @Schema(description = "카테고리 아이템 리스트")
     private List<CategoryItemApiResponse> categoryItemList;
 
-//    public CategoryApiResponse(Category category, CategoryItem categoryItem){
-//        this
-//    }
-
 }
