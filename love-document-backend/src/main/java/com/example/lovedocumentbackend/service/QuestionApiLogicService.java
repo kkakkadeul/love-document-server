@@ -4,8 +4,8 @@ import com.example.lovedocumentbackend.dto.request.QuestionApiRequest;
 import com.example.lovedocumentbackend.dto.response.QuestionApiResponse;
 import com.example.lovedocumentbackend.entity.*;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
-import com.example.lovedocumentbackend.exception.AlreadyUsedException;
-import com.example.lovedocumentbackend.exception.NotFoundException;
+import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
+import com.example.lovedocumentbackend.exception.RestApiException;
 import com.example.lovedocumentbackend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,17 +30,24 @@ public class QuestionApiLogicService {
 
     // 회원가입시 질문지 생성
     // 생성은 한번만 가능함
-    public Boolean makeQuestions(String nickName ,List<QuestionApiRequest> requestList){
-        User user = userRepository.findByNickname(nickName).orElseThrow(NotFoundException::new);
-        Optional<List<QuestionGroup>> optionalList = questionGroupRepository.findAllByUserId(user.getId());
+    public Boolean makeQuestions(String nickName ,List<QuestionApiRequest> requestList) {
+        User user = userRepository.findByNickname(nickName);
+
+        if (user != null) {
+            throw new RestApiException(CommonErrorCode.AlREADY_REQUEST);
+        }
+
+        List<QuestionGroup> optionalList = questionGroupRepository.findAllByUserId(user.getId());
+
+        if (optionalList == null){
+            throw new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION);
+        }
 
         // 생성시 한번, post 중복요청 예외처리
-        optionalList.ifPresent(op -> {
-            op.forEach(questionG -> {
-                if (questionG.getStatus() == BooleanType.Y){
-                    throw new AlreadyUsedException();
-                }
-            });
+        optionalList.forEach(questionG -> {
+            if (questionG.getStatus() == BooleanType.Y){
+                throw new RestApiException(CommonErrorCode.NOT_FOUND);
+            }
         });
 
         QuestionGroup questionGroup = QuestionGroup.builder()
@@ -57,7 +64,12 @@ public class QuestionApiLogicService {
         QuestionGroup newSavedQuestionGroup = questionGroupRepository.save(savedQuestionGroup);
 
         requestList.forEach(request -> {
-            CategoryItem categoryItem = categoryItemRepository.findById(request.getId()).orElseThrow(NotFoundException::new);
+            CategoryItem categoryItem = null;
+            try {
+                categoryItem = categoryItemRepository.findById(request.getId()).orElseThrow(Exception::new);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
             Question question = Question.builder()
                     .questionGroup(savedQuestionGroup)
@@ -71,15 +83,29 @@ public class QuestionApiLogicService {
 
     public List<QuestionApiResponse> getIdeal(String nickname) {
 
-        User user = userRepository.findByNickname(nickname).orElseThrow(NotFoundException::new);
-        QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(NotFoundException::new);
-        List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId()).orElseThrow(NotFoundException::new);
+        User user = userRepository.findByNickname(nickname);
+        QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y);
+        List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId());
         Set<Category> categoryList = new HashSet<>();
 
+        if (user == null) {
+            throw new RestApiException(CommonErrorCode.NOT_FOUND_USER);
+        } else if (questionGroup == null) {
+            throw new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION);
+        } else if (questionList == null) {
+            throw new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION);
+        }
+
+
         questionList.forEach(question -> {
-            CategoryItem categoryItem = categoryItemRepository.findById(question.getCategoryItem().getId()).orElseThrow(NotFoundException::new);
-            Category category = categoryRepository.findById(categoryItem.getCategory().getId()).orElseThrow(NotFoundException::new);
-            categoryList.add(category);
+            try {
+                CategoryItem categoryItem = categoryItemRepository.findById(question.getCategoryItem().getId()).orElseThrow(Exception::new);
+                Category category = categoryRepository.findById(categoryItem.getCategory().getId()).orElseThrow(Exception::new);
+
+                categoryList.add(category);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
 
         return reponse(questionList, categoryList);
