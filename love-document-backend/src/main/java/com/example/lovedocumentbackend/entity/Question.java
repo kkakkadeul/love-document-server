@@ -25,4 +25,15 @@ public class Question extends BaseEntity{
     @ManyToOne
     private QuestionGroup questionGroup;
 
+    public Category getCategory() {
+        return this.getCategoryItem().getCategory();
+    }
+
+    public Long getCategoryItemId() {
+        return this.categoryItem.getId();
+    }
+
+    public Long getCategoryId() {
+        return getCategory().getId();
+    }
 }

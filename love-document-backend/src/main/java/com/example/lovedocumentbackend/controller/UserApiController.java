@@ -35,15 +35,9 @@ public class UserApiController {
             @ApiResponse(responseCode = "400", description = "입력 오류", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/login")
-    public ResponseEntity<UserApiResponse> signIn(@RequestBody @Valid UserApiRequest request, BindingResult result) throws Exception {
+    public ResponseEntity<UserApiResponse> signIn(@RequestBody @Valid UserApiRequest request, BindingResult result) {
+        validBindingResult(result);
 
-        if(result.hasErrors()){
-            if(result.getFieldError().getField().toString().equals("nickname")){
-                throw new RestApiException(CommonErrorCode.INVALID_USER_NICKNAME);
-            }else{
-                throw new RestApiException(CommonErrorCode.INVALID_USER_PASSWORD);
-            }
-        }
         return new ResponseEntity<>(userApiLogicService.login(request), HttpStatus.OK);
     }
 
@@ -55,22 +49,19 @@ public class UserApiController {
             @ApiResponse(responseCode = "409", description = "닉네임 사용중", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/register")
-    public ResponseEntity<UserApiResponse> signUp(@RequestBody @Valid UserApiRequest request, BindingResult result) throws Exception {
+    public ResponseEntity<UserApiResponse> signUp(@RequestBody @Valid UserApiRequest request, BindingResult result) {
+        validBindingResult(result);
 
+        return new ResponseEntity<>(userApiLogicService.register(request), HttpStatus.OK);
+    }
+
+    private void validBindingResult(BindingResult result) {
         if (result.hasErrors()){
-            if(result.getFieldError().getField().toString().equals("nickname")){
+            if(result.getFieldError().getField().equals("nickname")){
                 throw new RestApiException(CommonErrorCode.INVALID_USER_NICKNAME);
             }else{
                 throw new RestApiException(CommonErrorCode.INVALID_USER_PASSWORD);
             }
         }
-
-        return new ResponseEntity<>(userApiLogicService.register(request), HttpStatus.OK);
     }
-
-    @GetMapping("/hello")
-    public String hello(){
-        return "hello";
-    }
-
 }
