@@ -4,8 +4,6 @@ import com.example.lovedocumentbackend.itf.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.function.Supplier;
-
 @Getter
 @RequiredArgsConstructor
 public class RestApiException extends RuntimeException {

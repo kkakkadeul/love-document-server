@@ -15,5 +15,5 @@ public interface QuestionGroupRepository extends JpaRepository<QuestionGroup, Lo
     List<QuestionGroup> findAllByUserId(Long id);
 
     @Enumerated(EnumType.STRING)
-    QuestionGroup findByUserIdAndStatus(Long id, BooleanType status);
+    Optional<QuestionGroup> findByUserIdAndStatus(Long id, BooleanType status);
 }

@@ -1,6 +1,8 @@
 package com.example.lovedocumentbackend.config;
 
 import com.example.lovedocumentbackend.component.JwtProvider;
+import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
+import com.example.lovedocumentbackend.exception.RestApiException;
 import com.example.lovedocumentbackend.security.JwtAuthenticationFilter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

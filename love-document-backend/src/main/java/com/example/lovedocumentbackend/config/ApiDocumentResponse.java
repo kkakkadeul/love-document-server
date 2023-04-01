@@ -21,7 +21,7 @@ import java.lang.annotation.*;
         @ApiResponse(
                 responseCode = "401",
                 description = "인증 실패",
-                content = @Content(schema = @Schema(implementation = HttpServletResponse.class))
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
         ),
 
 })

@@ -7,52 +7,33 @@ import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
 import com.example.lovedocumentbackend.exception.RestApiException;
 import com.example.lovedocumentbackend.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class QuestionApiLogicService {
 
     private final QuestionRepository questionRepository;
-
     private final QuestionGroupRepository questionGroupRepository;
-
     private final UserRepository userRepository;
-
     private final CategoryItemRepository categoryItemRepository;
-
     private final CategoryRepository categoryRepository;
-
     private final CategoryItemExampleRepository categoryItemExampleRepository;
 
     // 회원가입시 질문지 생성
     // 생성은 한번만 가능함
-    public Boolean makeQuestions(String nickName ,List<QuestionApiRequest> requestList) {
-        User user = userRepository.findByNickname(nickName);
-
-        if (user != null) {
-            throw new RestApiException(CommonErrorCode.AlREADY_REQUEST);
-        }
-
-        List<QuestionGroup> optionalList = questionGroupRepository.findAllByUserId(user.getId());
-
-        if (optionalList == null){
-            throw new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION);
-        }
-
-        // 생성시 한번, post 중복요청 예외처리
-        optionalList.forEach(questionG -> {
-            if (questionG.getStatus() == BooleanType.Y){
-                throw new RestApiException(CommonErrorCode.NOT_FOUND);
-            }
-        });
+    @Transactional
+    public void firstMakeQuestions(String nickName ,QuestionApiRequest request) {
+        User user = userRepository.findByNickname(nickName).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
 
         QuestionGroup questionGroup = QuestionGroup.builder()
                 .user(user)
-                .itemNum(requestList.size())
+                .itemNum(request.getCategoryItems().size())
                 .status(BooleanType.Y)
                 .build();
 
@@ -63,75 +44,57 @@ public class QuestionApiLogicService {
         savedQuestionGroup.setLink(link);
         QuestionGroup newSavedQuestionGroup = questionGroupRepository.save(savedQuestionGroup);
 
-        requestList.forEach(request -> {
-            CategoryItem categoryItem = null;
-            try {
-                categoryItem = categoryItemRepository.findById(request.getId()).orElseThrow(Exception::new);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        request.getCategoryItems().forEach(id -> {
+            CategoryItem categoryItem = categoryItemRepository.findById(id)
+                    .orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND));
 
             Question question = Question.builder()
-                    .questionGroup(savedQuestionGroup)
+                    .questionGroup(newSavedQuestionGroup)
                     .categoryItem(categoryItem)
                     .build();
 
             questionRepository.save(question);
         });
-        return true;
     }
 
     public List<QuestionApiResponse> getIdeal(String nickname) {
-
-        User user = userRepository.findByNickname(nickname);
-        QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y);
+        User user = userRepository.findByNickname(nickname).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
+        QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));;
         List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId());
-        Set<Category> categoryList = new HashSet<>();
+        Set<Category> categoryList = questionList.stream()
+                .map(Question::getCategory)
+                .collect(Collectors.toSet());
 
-        if (user == null) {
-            throw new RestApiException(CommonErrorCode.NOT_FOUND_USER);
-        } else if (questionGroup == null) {
-            throw new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION);
-        } else if (questionList == null) {
-            throw new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION);
-        }
-
-
-        questionList.forEach(question -> {
-            try {
-                CategoryItem categoryItem = categoryItemRepository.findById(question.getCategoryItem().getId()).orElseThrow(Exception::new);
-                Category category = categoryRepository.findById(categoryItem.getCategory().getId()).orElseThrow(Exception::new);
-
-                categoryList.add(category);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        return reponse(questionList, categoryList);
+        return toResponse(questionList, categoryList);
     }
 
-    private List<QuestionApiResponse> reponse(List<Question> questionList, Set<Category> categoryList) {
+    private List<QuestionApiResponse> toResponse(List<Question> questionList, Set<Category> categoryList) {
         List<QuestionApiResponse> questionApiResponseList = new ArrayList<>();
 
         categoryList.forEach(category -> {
             List<QuestionApiResponse.CategoryItemInfo> categoryItemInfoList = new ArrayList<>();
 
             questionList.forEach(question -> {
-                if (Objects.equals(category.getId(), question.getCategoryItem().getCategory().getId())){
-                    List<String> contents = new ArrayList<>();
-                    List<CategoryItemExample> categoryItemExampleList = categoryItemExampleRepository.findAllByCategoryItemId(question.getCategoryItem().getId());
+                if (Objects.equals(category.getId(), question.getCategoryId())){
+                    List<CategoryItemExample> categoryItemExampleList = categoryItemExampleRepository.findAllByCategoryItemId(question.getCategoryItemId());
 
-                    categoryItemExampleList.forEach(categoryItemExample -> {
-                        contents.add(categoryItemExample.getContent());
-                    });
+                    List<QuestionApiResponse.Example> contents = categoryItemExampleList.stream()
+                            .map(CategoryItemExample -> {
+                                return QuestionApiResponse.Example.builder()
+                                        .id(CategoryItemExample.getId())
+                                        .content(CategoryItemExample.getContent())
+                                        .build();
+                            })
+                            .collect(Collectors.toList());
 
                     QuestionApiResponse.CategoryItemInfo categoryItemInfo = QuestionApiResponse.CategoryItemInfo.builder()
                             .id(question.getCategoryItem().getId())
-                            .multiple(question.getCategoryItem().getMultiple())
+                            .multiple(question.getCategoryItem().getIdealMultiple())
                             .type(question.getCategoryItem().getType())
                             .question(question.getCategoryItem().getIdealQuestion())
-                            .contentList(contents)
+                            .negativeLabel(question.getCategoryItem().getIdealNegativeLabel())
+                            .positiveLabel(question.getCategoryItem().getIdealPositiveLabel())
+                            .exampleList(contents)
                             .build();
 
                     categoryItemInfoList.add(categoryItemInfo);

@@ -12,11 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@Transactional
 @Service
 public class UserApiLogicService {
 
@@ -24,12 +22,9 @@ public class UserApiLogicService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
+   @Transactional
     public UserApiResponse login(UserApiRequest request) {
-        User user = userRepository.findByNickname(request.getNickname());
-
-        if (user == null) {
-            throw new RestApiException(CommonErrorCode.NOT_FOUND_USER);
-        }
+        User user = userRepository.findByNickname(request.getNickname()).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));;
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             throw new RestApiException(CommonErrorCode.PASSWORD_ERR);
@@ -40,10 +35,11 @@ public class UserApiLogicService {
        return response(user);
     }
 
-    public UserApiResponse register(UserApiRequest request) throws Exception {
-        User alreadyUser = userRepository.findByNickname(request.getNickname());
+    @Transactional
+    public UserApiResponse register(UserApiRequest request) {
+        Optional<User> optional = userRepository.findByNickname(request.getNickname());
 
-        if (alreadyUser != null) {
+        if (optional.isPresent()){
             throw new RestApiException(CommonErrorCode.AlREADY_USER);
         }
 
@@ -58,13 +54,10 @@ public class UserApiLogicService {
     }
 
     private UserApiResponse response(User user){
-
-        UserApiResponse userApiResponse = UserApiResponse.builder()
+        return UserApiResponse.builder()
                 .nickname(user.getNickname())
                 .token(jwtProvider.createToken(user.getNickname()))
                 .build();
-
-        return userApiResponse;
     }
 
 }
