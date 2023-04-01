@@ -4,7 +4,8 @@ import com.example.lovedocumentbackend.config.ApiDocumentResponse;
 import com.example.lovedocumentbackend.dto.request.UserApiRequest;
 import com.example.lovedocumentbackend.dto.response.ErrorResponse;
 import com.example.lovedocumentbackend.dto.response.UserApiResponse;
-import com.example.lovedocumentbackend.exception.InvalidParameterException;
+import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
+import com.example.lovedocumentbackend.exception.RestApiException;
 import com.example.lovedocumentbackend.service.UserApiLogicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,10 +37,13 @@ public class UserApiController {
     @PostMapping("/login")
     public ResponseEntity<UserApiResponse> signIn(@RequestBody @Valid UserApiRequest request, BindingResult result) throws Exception {
 
-        if (result.hasErrors()){
-            throw new InvalidParameterException(result);
+        if(result.hasErrors()){
+            if(result.getFieldError().getField().toString().equals("nickname")){
+                throw new RestApiException(CommonErrorCode.INVALID_USER_NICKNAME);
+            }else{
+                throw new RestApiException(CommonErrorCode.INVALID_USER_PASSWORD);
+            }
         }
-
         return new ResponseEntity<>(userApiLogicService.login(request), HttpStatus.OK);
     }
 
@@ -54,7 +58,11 @@ public class UserApiController {
     public ResponseEntity<UserApiResponse> signUp(@RequestBody @Valid UserApiRequest request, BindingResult result) throws Exception {
 
         if (result.hasErrors()){
-            throw new InvalidParameterException(result);
+            if(result.getFieldError().getField().toString().equals("nickname")){
+                throw new RestApiException(CommonErrorCode.INVALID_USER_NICKNAME);
+            }else{
+                throw new RestApiException(CommonErrorCode.INVALID_USER_PASSWORD);
+            }
         }
 
         return new ResponseEntity<>(userApiLogicService.register(request), HttpStatus.OK);

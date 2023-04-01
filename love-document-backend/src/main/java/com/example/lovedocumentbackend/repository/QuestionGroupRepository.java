@@ -12,8 +12,8 @@ import java.util.Optional;
 
 @Repository
 public interface QuestionGroupRepository extends JpaRepository<QuestionGroup, Long> {
-    Optional<List<QuestionGroup>> findAllByUserId(Long id);
+    List<QuestionGroup> findAllByUserId(Long id);
 
     @Enumerated(EnumType.STRING)
-    Optional<QuestionGroup> findByUserIdAndStatus(Long id, BooleanType status);
+    QuestionGroup findByUserIdAndStatus(Long id, BooleanType status);
 }

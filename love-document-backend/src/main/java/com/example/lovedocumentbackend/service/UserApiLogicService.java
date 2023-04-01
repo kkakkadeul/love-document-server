@@ -4,15 +4,15 @@ import com.example.lovedocumentbackend.component.JwtProvider;
 import com.example.lovedocumentbackend.dto.request.UserApiRequest;
 import com.example.lovedocumentbackend.dto.response.UserApiResponse;
 import com.example.lovedocumentbackend.entity.User;
-import com.example.lovedocumentbackend.exception.AlreadyUsedException;
-import com.example.lovedocumentbackend.exception.NotFoundException;
+import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
+import com.example.lovedocumentbackend.exception.RestApiException;
 import com.example.lovedocumentbackend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -24,11 +24,15 @@ public class UserApiLogicService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
-    public UserApiResponse login(UserApiRequest request) throws Exception {
-        User user = userRepository.findByNickname(request.getNickname()).orElseThrow(NotFoundException::new);
+    public UserApiResponse login(UserApiRequest request) {
+        User user = userRepository.findByNickname(request.getNickname());
+
+        if (user == null) {
+            throw new RestApiException(CommonErrorCode.NOT_FOUND_USER);
+        }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            throw new NotFoundException();
+            throw new RestApiException(CommonErrorCode.PASSWORD_ERR);
         }
 
         userRepository.save(user);
@@ -37,10 +41,10 @@ public class UserApiLogicService {
     }
 
     public UserApiResponse register(UserApiRequest request) throws Exception {
-        Optional<User> optional = userRepository.findByNickname(request.getNickname());
+        User alreadyUser = userRepository.findByNickname(request.getNickname());
 
-        if (optional.isPresent()){
-            throw new AlreadyUsedException();
+        if (alreadyUser != null) {
+            throw new RestApiException(CommonErrorCode.AlREADY_USER);
         }
 
         User user = User.builder()

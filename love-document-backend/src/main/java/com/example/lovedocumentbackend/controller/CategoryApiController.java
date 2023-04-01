@@ -28,7 +28,7 @@ public class CategoryApiController {
     @ApiDocumentResponse
     @Operation(summary = "카테고리 목록", description = "카테고리 목록 불러오기")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content (array = @ArraySchema(schema = @Schema(implementation = CategoryApiResponse.class)))}),
+            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = CategoryApiResponse.class)))}),
     })
     @GetMapping("")
     public ResponseEntity<List<CategoryApiResponse>> getCategory() {

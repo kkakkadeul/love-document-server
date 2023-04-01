@@ -3,7 +3,6 @@ package com.example.lovedocumentbackend.controller;
 
 import com.example.lovedocumentbackend.dto.request.QuestionApiRequest;
 import com.example.lovedocumentbackend.dto.response.QuestionApiResponse;
-import com.example.lovedocumentbackend.exception.InvalidParameterException;
 import com.example.lovedocumentbackend.service.QuestionApiLogicService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
