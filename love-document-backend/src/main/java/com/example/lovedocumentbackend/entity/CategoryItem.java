@@ -3,6 +3,9 @@ package com.example.lovedocumentbackend.entity;
 
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.QuestionType;
+import com.example.lovedocumentbackend.ideal.entity.IdealRange;
+import com.example.lovedocumentbackend.ideal.entity.IdealScore;
+import com.example.lovedocumentbackend.ideal.entity.IdealYn;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -14,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
-@ToString(exclude = {"category", "categoryItemExampleList"})
+@ToString(exclude = {"category", "categoryItemExampleList", "idealYnList","idealRangeList", "idealScoreList"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -55,5 +58,14 @@ public class CategoryItem extends BaseEntity{
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
     private List<CategoryItemExample> categoryItemExampleList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
+    private List<IdealYn> idealYnList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
+    private List<IdealRange> idealRangeList;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
+    private List<IdealScore> idealScoreList;
 
 }
