@@ -1,8 +1,12 @@
 package com.example.lovedocumentbackend.entity;
 
 
+import com.example.lovedocumentbackend.ideal.entity.IdealChoice;
+import com.example.lovedocumentbackend.ideal.entity.IdealScore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @ToString(exclude = {"categoryItem"})
@@ -21,4 +25,7 @@ public class CategoryItemExample extends BaseEntity{
 
     @ManyToOne
     private CategoryItem categoryItem;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
+    private List<IdealChoice> idealChoiceList;
 }

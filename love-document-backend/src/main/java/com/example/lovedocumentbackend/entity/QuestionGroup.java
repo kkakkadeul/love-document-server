@@ -1,6 +1,7 @@
 package com.example.lovedocumentbackend.entity;
 
 import com.example.lovedocumentbackend.enumclass.BooleanType;
+import com.example.lovedocumentbackend.ideal.entity.Ideal;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,4 +29,7 @@ public class QuestionGroup extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToOne(mappedBy = "questionGroup")
+    private Ideal ideal;
 }
