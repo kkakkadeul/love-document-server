@@ -49,6 +49,18 @@ public class QuestionApiResponse {
 
         @Schema(description = "객관식 답 예시 리스트")
         private List<Example> exampleList;
+
+        @Schema(description = "CHOICE id 리스트 or null", example = "[1, 2, 3]")
+        private List<Long> choiceIdList;
+
+        @Schema(description = "RANGE int 리스트 or null ", example = "[160, 180]")
+        private List<Integer> rangeNumList;
+
+        @Schema(description = "SCORE int 리스트 or null ", example = "[3]")
+        private List<Integer> scoreNumList;
+
+        @Schema(description = "YN string 리스트 or null ", example = "[Y]")
+        private List<BooleanType> ynBoolList;
     }
 
     @Getter

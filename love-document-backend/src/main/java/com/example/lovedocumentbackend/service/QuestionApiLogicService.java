@@ -5,12 +5,16 @@ import com.example.lovedocumentbackend.dto.response.QuestionApiResponse;
 import com.example.lovedocumentbackend.entity.*;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
+import com.example.lovedocumentbackend.enumclass.QuestionType;
 import com.example.lovedocumentbackend.exception.RestApiException;
+import com.example.lovedocumentbackend.ideal.entity.*;
+import com.example.lovedocumentbackend.ideal.repository.*;
 import com.example.lovedocumentbackend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +28,11 @@ public class QuestionApiLogicService {
     private final CategoryItemRepository categoryItemRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryItemExampleRepository categoryItemExampleRepository;
+    private final IdealRepository idealRepository;
+    private final IdealChoiceRepository idealChoiceRepository;
+    private final IdealRangeRepository idealRangeRepository;
+    private final IdealScoreRepository idealScoreRepository;
+    private final IdealYnRepository idealYnRepository;
 
     // 회원가입시 질문지 생성
     // 생성은 한번만 가능함
@@ -59,16 +68,17 @@ public class QuestionApiLogicService {
 
     public List<QuestionApiResponse> getIdeal(String nickname) {
         User user = userRepository.findByNickname(nickname).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
-        QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));;
+        QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
+        Optional<Ideal> ideal = idealRepository.findByQuestionGroupId(questionGroup.getId());
         List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId());
         Set<Category> categoryList = questionList.stream()
                 .map(Question::getCategory)
                 .collect(Collectors.toSet());
 
-        return toResponse(questionList, categoryList);
+        return toResponse(questionList, categoryList,ideal);
     }
 
-    private List<QuestionApiResponse> toResponse(List<Question> questionList, Set<Category> categoryList) {
+    private List<QuestionApiResponse> toResponse(List<Question> questionList, Set<Category> categoryList, Optional<Ideal> ideal) {
         List<QuestionApiResponse> questionApiResponseList = new ArrayList<>();
 
         categoryList.forEach(category -> {
@@ -87,6 +97,42 @@ public class QuestionApiLogicService {
                             })
                             .collect(Collectors.toList());
 
+                    List<Long> choiceIdList = new ArrayList<>();
+                    List<Integer> rangeNumList = new ArrayList<>();
+                    List<Integer> scoreNumList = new ArrayList<>();
+                    List<BooleanType> ynBoolList = new ArrayList<>();
+
+                    ideal.ifPresent(userIdeal -> {
+                        if (question.getCategoryItem().getType() == QuestionType.YN){
+                            Optional<IdealYn> idealYn = idealYnRepository.findByIdealAndCategoryItem(userIdeal, question.getCategoryItem());
+                            idealYn.ifPresent(yn -> {
+                                ynBoolList.add(yn.getContent());
+                            });
+
+                        } else if (question.getCategoryItem().getType() == QuestionType.RANGE) {
+                            Optional<IdealRange> idealRange = idealRangeRepository.findByIdealAndCategoryItem(userIdeal, question.getCategoryItem());
+                            idealRange.ifPresent(range -> {
+                                rangeNumList.add(range.getMore());
+                                rangeNumList.add(range.getLess());
+                            });
+
+                        } else if (question.getCategoryItem().getType() == QuestionType.SCORE) {
+                            Optional<IdealScore> idealScore = idealScoreRepository.findByIdealAndCategoryItem(userIdeal, question.getCategoryItem());
+                            idealScore.ifPresent(score -> {
+                                scoreNumList.add(score.getScore());
+                            });
+
+                        } else if (question.getCategoryItem().getType() == QuestionType.CHOICE) {
+                            categoryItemExampleList.forEach(ex -> {
+                                Optional<IdealChoice> idealChoice = idealChoiceRepository.findByIdealAndCategoryItemExample(userIdeal, ex);
+                                idealChoice.ifPresent(choice -> {
+                                    choiceIdList.add(choice.getId());
+                                });
+                            });
+                        }
+                    });
+
+
                     QuestionApiResponse.CategoryItemInfo categoryItemInfo = QuestionApiResponse.CategoryItemInfo.builder()
                             .id(question.getCategoryItem().getId())
                             .multiple(question.getCategoryItem().getIdealMultiple())
@@ -94,6 +140,10 @@ public class QuestionApiLogicService {
                             .question(question.getCategoryItem().getIdealQuestion())
                             .negativeLabel(question.getCategoryItem().getIdealNegativeLabel())
                             .positiveLabel(question.getCategoryItem().getIdealPositiveLabel())
+                            .choiceIdList(choiceIdList)
+                            .rangeNumList(rangeNumList)
+                            .scoreNumList(scoreNumList)
+                            .ynBoolList(ynBoolList)
                             .exampleList(contents)
                             .build();
 

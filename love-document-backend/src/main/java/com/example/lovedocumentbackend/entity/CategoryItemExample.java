@@ -26,6 +26,6 @@ public class CategoryItemExample extends BaseEntity{
     @ManyToOne
     private CategoryItem categoryItem;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItemExample")
     private List<IdealChoice> idealChoiceList;
 }
