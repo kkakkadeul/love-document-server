@@ -24,15 +24,15 @@ public class Ideal extends BaseEntity {
     @JoinColumn(name = "question_group_id")
     private QuestionGroup questionGroup;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal", orphanRemoval = true)
     private List<IdealYn> idealYnList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal", orphanRemoval = true)
     private List<IdealRange> idealRangeList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal", orphanRemoval = true)
     private List<IdealScore> idealScoreList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal", orphanRemoval = true)
     private List<IdealChoice> idealChoiceList;
 }

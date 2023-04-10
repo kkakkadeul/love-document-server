@@ -39,7 +39,7 @@ public class QuestionApiController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "카테고리 목록", description = "카테고리 목록 불러오기")
+    @Operation(summary = "유저 카테고리 목록", description = "유저 카테고리 목록 불러오기")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = Void.class)))}),
     })

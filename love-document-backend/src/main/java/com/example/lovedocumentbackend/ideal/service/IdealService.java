@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @RequiredArgsConstructor
 @Service
@@ -52,6 +54,9 @@ public class IdealService {
         // 유저의 QuestionGroup 찾기
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
         QuestionGroup userQuestionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
+        Optional<Ideal> optional = idealRepository.findByQuestionGroupId(userQuestionGroup.getId());
+
+        optional.ifPresent(idealRepository::delete);
 
         // questionGroup id로 ideal 생성
         Ideal newIdeal = Ideal.builder()
