@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionApiResponse {
+public class QuestionResponse {
 
     @Schema(description = "카테고리 title", example = "외모")
     private String categoryTitle;

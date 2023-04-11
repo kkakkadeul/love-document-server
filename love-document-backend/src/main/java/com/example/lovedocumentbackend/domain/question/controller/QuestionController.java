@@ -2,9 +2,9 @@ package com.example.lovedocumentbackend.domain.question.controller;
 
 
 import com.example.lovedocumentbackend.config.ApiDocumentResponse;
-import com.example.lovedocumentbackend.domain.question.dto.request.QuestionApiRequest;
-import com.example.lovedocumentbackend.domain.question.dto.response.QuestionApiResponse;
-import com.example.lovedocumentbackend.domain.question.service.QuestionApiLogicService;
+import com.example.lovedocumentbackend.domain.question.dto.request.QuestionRequest;
+import com.example.lovedocumentbackend.domain.question.dto.response.QuestionResponse;
+import com.example.lovedocumentbackend.domain.question.service.QuestionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,17 +24,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/questions")
 @RestController
-public class QuestionApiController {
+public class QuestionController {
 
-    private final QuestionApiLogicService questionApiLogicService;
+    private final QuestionService questionApiLogicService;
 
     @ApiDocumentResponse
     @Operation(summary = "유저 질문", description = "유저 질문 불러오기")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = QuestionApiResponse.class)))}),
+            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = QuestionResponse.class)))}),
     })
     @GetMapping("")
-    public ResponseEntity<List<QuestionApiResponse>> getIdealQuestion(Authentication authentication) {
+    public ResponseEntity<List<QuestionResponse>> getIdealQuestion(Authentication authentication) {
         return new ResponseEntity<>(questionApiLogicService.getIdeal(authentication.getName()), HttpStatus.OK);
     }
 
@@ -44,7 +44,7 @@ public class QuestionApiController {
             @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = Void.class)))}),
     })
     @PostMapping("")
-    public ResponseEntity<Void> postQuestion(Authentication authentication, @RequestBody QuestionApiRequest request) {
+    public ResponseEntity<Void> postQuestion(Authentication authentication, @RequestBody QuestionRequest request) {
         questionApiLogicService.firstMakeQuestions(authentication.getName(), request);
 
         return new ResponseEntity<>(HttpStatus.OK);

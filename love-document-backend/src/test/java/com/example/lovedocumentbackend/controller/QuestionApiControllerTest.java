@@ -7,9 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import com.example.lovedocumentbackend.domain.question.controller.QuestionApiController;
-import com.example.lovedocumentbackend.domain.question.dto.response.QuestionApiResponse;
-import com.example.lovedocumentbackend.domain.question.service.QuestionApiLogicService;
+import com.example.lovedocumentbackend.domain.question.controller.QuestionController;
+import com.example.lovedocumentbackend.domain.question.dto.response.QuestionResponse;
+import com.example.lovedocumentbackend.domain.question.service.QuestionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,10 +25,10 @@ import org.springframework.security.core.Authentication;
 public class QuestionApiControllerTest {
 
     @Mock
-    private QuestionApiLogicService questionApiLogicService;
+    private QuestionService questionApiLogicService;
 
     @InjectMocks
-    private QuestionApiController questionApiController;
+    private QuestionController questionApiController;
 
     private Authentication mockAuthentication;
 
@@ -42,13 +42,13 @@ public class QuestionApiControllerTest {
     public void 유저_질문_불러오기_테스트() {
         // given
         String nickname = "test01";
-        List<QuestionApiResponse> expectedQuestionList = List.of(
-                new QuestionApiResponse("", List.of(new QuestionApiResponse.CategoryItemInfo()))
+        List<QuestionResponse> expectedQuestionList = List.of(
+                new QuestionResponse("", List.of(new QuestionResponse.CategoryItemInfo()))
         );
         when(questionApiLogicService.getIdeal(any())).thenReturn(expectedQuestionList);
 
         // when
-        ResponseEntity<List<QuestionApiResponse>> responseEntity = questionApiController.getIdealQuestion(mockAuthentication);
+        ResponseEntity<List<QuestionResponse>> responseEntity = questionApiController.getIdealQuestion(mockAuthentication);
 
         // then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());

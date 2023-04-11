@@ -6,15 +6,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryItemApiResponse {
+public class CategoryResponse {
 
-    @Schema(description = "카테고리 아이템 아이디", example = "1")
+    @Schema(description = "카테고리 아이디", example = "1")
     private Long id;
 
-    @Schema(description = "카테고리 아이템 이름", example = "키")
+    @Schema(description = "카테고리 이름", example = "외모")
     private String title;
+
+    @Schema(description = "카테고리 아이템 리스트")
+    private List<CategoryItemResponse> categoryItemList;
+
 }

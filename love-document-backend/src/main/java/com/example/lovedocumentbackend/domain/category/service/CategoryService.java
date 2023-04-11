@@ -1,7 +1,7 @@
 package com.example.lovedocumentbackend.domain.category.service;
 
-import com.example.lovedocumentbackend.domain.category.dto.response.CategoryApiResponse;
-import com.example.lovedocumentbackend.domain.category.dto.response.CategoryItemApiResponse;
+import com.example.lovedocumentbackend.domain.category.dto.response.CategoryResponse;
+import com.example.lovedocumentbackend.domain.category.dto.response.CategoryItemResponse;
 import com.example.lovedocumentbackend.domain.category.entity.Category;
 import com.example.lovedocumentbackend.domain.category.entity.CategoryItem;
 import com.example.lovedocumentbackend.domain.category.repository.CategoryItemRepository;
@@ -14,14 +14,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class CategoryApiLogicService {
+public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
     private final CategoryItemRepository categoryItemRepository;
 
-    public List<CategoryApiResponse> allCategory() {
-        List<CategoryApiResponse> CategoryApiResponseList = new ArrayList<>();
+    public List<CategoryResponse> allCategory() {
+        List<CategoryResponse> CategoryApiResponseList = new ArrayList<>();
         List<Category> categoryList = categoryRepository.findAll();
 
         categoryList.forEach(category -> {
@@ -32,13 +32,13 @@ public class CategoryApiLogicService {
     }
 
 
-    private CategoryApiResponse response(Category category){
+    private CategoryResponse response(Category category){
 
-        List<CategoryItemApiResponse> categoryItemResponseList = new ArrayList<>();
+        List<CategoryItemResponse> categoryItemResponseList = new ArrayList<>();
         List<CategoryItem> categoryItemList = categoryItemRepository.findAllByCategoryId(category.getId());
 
         categoryItemList.forEach(categoryItem -> {
-            CategoryItemApiResponse categoryItemApiResponse = CategoryItemApiResponse.builder()
+            CategoryItemResponse categoryItemApiResponse = CategoryItemResponse.builder()
                     .id(categoryItem.getId())
                     .title(categoryItem.getTitle())
                     .build();
@@ -46,7 +46,7 @@ public class CategoryApiLogicService {
         });
 
 
-        CategoryApiResponse categoryApiResponse = CategoryApiResponse.builder()
+        CategoryResponse categoryApiResponse = CategoryResponse.builder()
                 .id(category.getId())
                 .title(category.getTitle())
                 .categoryItemList(categoryItemResponseList)
