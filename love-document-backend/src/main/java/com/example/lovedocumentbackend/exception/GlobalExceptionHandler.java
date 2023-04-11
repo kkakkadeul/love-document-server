@@ -1,13 +1,10 @@
 package com.example.lovedocumentbackend.exception;
 
-import com.example.lovedocumentbackend.dto.response.ErrorResponse;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
-import com.example.lovedocumentbackend.itf.ErrorCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.webjars.NotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {

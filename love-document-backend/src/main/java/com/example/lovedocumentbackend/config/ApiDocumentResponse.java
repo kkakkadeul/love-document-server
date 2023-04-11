@@ -1,11 +1,10 @@
 package com.example.lovedocumentbackend.config;
 
-import com.example.lovedocumentbackend.dto.response.ErrorResponse;
+import com.example.lovedocumentbackend.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.lang.annotation.*;
 
