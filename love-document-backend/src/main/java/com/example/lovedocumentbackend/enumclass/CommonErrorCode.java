@@ -1,7 +1,6 @@
 package com.example.lovedocumentbackend.enumclass;
 
-import com.example.lovedocumentbackend.itf.ErrorCode;
-import lombok.AllArgsConstructor;
+import com.example.lovedocumentbackend.exception.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -7,8 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import com.example.lovedocumentbackend.dto.response.QuestionApiResponse;
-import com.example.lovedocumentbackend.service.QuestionApiLogicService;
+import com.example.lovedocumentbackend.domain.question.controller.QuestionApiController;
+import com.example.lovedocumentbackend.domain.question.dto.response.QuestionApiResponse;
+import com.example.lovedocumentbackend.domain.question.service.QuestionApiLogicService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
