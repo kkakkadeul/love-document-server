@@ -30,7 +30,7 @@ public class IdealController {
 
     // POST : 답안 정보 입력
     @ApiDocumentResponse
-    @Operation(summary = "유저 답변 저장", description = "유저 답변 저장하기")
+    @Operation(summary = "유저 답안 생성", description = "유저 답변 저장하기")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = Void.class)))}),
     })

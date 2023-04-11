@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "User", description = "유저 관련 api")
+@Tag(name = "User", description = "User api")
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @RestController
@@ -29,7 +29,7 @@ public class UserController {
 
     // 로그인 API
     @ApiDocumentResponse
-    @Operation(summary = "로그인", description = "로그인")
+    @Operation(summary = "로그인", description = "가입한 유저 로그인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = UserResponse.class))),
             @ApiResponse(responseCode = "400", description = "입력 오류", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "회원가입", description = "회원가입")
+    @Operation(summary = "회원가입", description = "새로운 유저 회원가입")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = UserResponse.class))),
             @ApiResponse(responseCode = "400", description = "입력 오류", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
