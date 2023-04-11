@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Question", description = "질문 관련 api")
+@Tag(name = "Question", description = "question api")
 @RequiredArgsConstructor
 @RequestMapping("/questions")
 @RestController
@@ -29,7 +29,7 @@ public class QuestionController {
     private final QuestionService questionApiLogicService;
 
     @ApiDocumentResponse
-    @Operation(summary = "유저 질문", description = "유저 질문 불러오기")
+    @Operation(summary = "유저 질문지 조회", description = "유저가 선택한 카테고리의 질문지 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = QuestionResponse.class)))}),
     })
@@ -39,7 +39,7 @@ public class QuestionController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "유저 카테고리 목록", description = "유저 카테고리 목록 불러오기")
+    @Operation(summary = "유저 질문지 생성", description = "유저가 선택한 카테고리로 질문지 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = Void.class)))}),
     })

@@ -26,7 +26,7 @@ public class CategoryController {
     private final CategoryService categoryApiLogicService;
 
     @ApiDocumentResponse
-    @Operation(summary = "카테고리 목록", description = "카테고리 목록 불러오기")
+    @Operation(summary = "모든 카테고리 조회", description = "서버에 저장되어 있는 모든 카테고리 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = CategoryResponse.class)))}),
     })
