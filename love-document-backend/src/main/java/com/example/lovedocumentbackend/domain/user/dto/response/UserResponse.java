@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserApiResponse {
+public class UserResponse {
 
     @Schema(description = "유저 닉네임", example = "보니")
     private String nickname;
@@ -19,7 +19,7 @@ public class UserApiResponse {
     @Schema(description = "유저 JWT 토큰", example = "sdfjhqklndklmsd;lm;lsd;lsdmv")
     private String token;
 
-    public UserApiResponse(User user) {
+    public UserResponse(User user) {
         this.nickname = user.getNickname();
     }
 }

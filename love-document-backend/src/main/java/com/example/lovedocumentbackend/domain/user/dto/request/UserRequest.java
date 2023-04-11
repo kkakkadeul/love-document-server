@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserApiRequest {
+public class UserRequest {
 
     @Schema(description = "유저 닉네임", example = "보니")
     @NotBlank(message = "닉네임은 필수 입력 값입니다.")

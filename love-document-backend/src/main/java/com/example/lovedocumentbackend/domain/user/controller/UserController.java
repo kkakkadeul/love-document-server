@@ -1,9 +1,9 @@
 package com.example.lovedocumentbackend.domain.user.controller;
 
 import com.example.lovedocumentbackend.config.ApiDocumentResponse;
-import com.example.lovedocumentbackend.domain.user.dto.response.UserApiResponse;
-import com.example.lovedocumentbackend.domain.user.service.UserApiLogicService;
-import com.example.lovedocumentbackend.domain.user.dto.request.UserApiRequest;
+import com.example.lovedocumentbackend.domain.user.dto.response.UserResponse;
+import com.example.lovedocumentbackend.domain.user.service.UserService;
+import com.example.lovedocumentbackend.domain.user.dto.request.UserRequest;
 import com.example.lovedocumentbackend.exception.ErrorResponse;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
 import com.example.lovedocumentbackend.exception.RestApiException;
@@ -24,18 +24,18 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @RestController
-public class UserApiController {
-    private final UserApiLogicService userApiLogicService;
+public class UserController {
+    private final UserService userApiLogicService;
 
     // 로그인 API
     @ApiDocumentResponse
     @Operation(summary = "로그인", description = "로그인")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = UserApiResponse.class))),
+            @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = UserResponse.class))),
             @ApiResponse(responseCode = "400", description = "입력 오류", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/login")
-    public ResponseEntity<UserApiResponse> signIn(@RequestBody @Valid UserApiRequest request, BindingResult result) {
+    public ResponseEntity<UserResponse> signIn(@RequestBody @Valid UserRequest request, BindingResult result) {
         validBindingResult(result);
 
         return new ResponseEntity<>(userApiLogicService.login(request), HttpStatus.OK);
@@ -44,12 +44,12 @@ public class UserApiController {
     @ApiDocumentResponse
     @Operation(summary = "회원가입", description = "회원가입")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = UserApiResponse.class))),
+            @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = UserResponse.class))),
             @ApiResponse(responseCode = "400", description = "입력 오류", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "409", description = "닉네임 사용중", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/register")
-    public ResponseEntity<UserApiResponse> signUp(@RequestBody @Valid UserApiRequest request, BindingResult result) {
+    public ResponseEntity<UserResponse> signUp(@RequestBody @Valid UserRequest request, BindingResult result) {
         validBindingResult(result);
 
         return new ResponseEntity<>(userApiLogicService.register(request), HttpStatus.OK);

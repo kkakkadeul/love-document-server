@@ -1,8 +1,8 @@
 package com.example.lovedocumentbackend.domain.category.controller;
 
 import com.example.lovedocumentbackend.config.ApiDocumentResponse;
-import com.example.lovedocumentbackend.domain.category.dto.response.CategoryApiResponse;
-import com.example.lovedocumentbackend.domain.category.service.CategoryApiLogicService;
+import com.example.lovedocumentbackend.domain.category.dto.response.CategoryResponse;
+import com.example.lovedocumentbackend.domain.category.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,17 +21,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/categories")
 @RestController
-public class CategoryApiController {
+public class CategoryController {
 
-    private final CategoryApiLogicService categoryApiLogicService;
+    private final CategoryService categoryApiLogicService;
 
     @ApiDocumentResponse
     @Operation(summary = "카테고리 목록", description = "카테고리 목록 불러오기")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = CategoryApiResponse.class)))}),
+            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = CategoryResponse.class)))}),
     })
     @GetMapping("")
-    public ResponseEntity<List<CategoryApiResponse>> getCategory() {
+    public ResponseEntity<List<CategoryResponse>> getCategory() {
         return new ResponseEntity<>(categoryApiLogicService.allCategory(), HttpStatus.OK);
     }
 }

@@ -2,8 +2,8 @@ package com.example.lovedocumentbackend.domain.user.service;
 
 import com.example.lovedocumentbackend.auth.JwtProvider;
 import com.example.lovedocumentbackend.domain.user.repository.UserRepository;
-import com.example.lovedocumentbackend.domain.user.dto.request.UserApiRequest;
-import com.example.lovedocumentbackend.domain.user.dto.response.UserApiResponse;
+import com.example.lovedocumentbackend.domain.user.dto.request.UserRequest;
+import com.example.lovedocumentbackend.domain.user.dto.response.UserResponse;
 import com.example.lovedocumentbackend.domain.user.entity.User;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
 import com.example.lovedocumentbackend.exception.RestApiException;
@@ -16,14 +16,14 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class UserApiLogicService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
    @Transactional
-    public UserApiResponse login(UserApiRequest request) {
+    public UserResponse login(UserRequest request) {
         User user = userRepository.findByNickname(request.getNickname()).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));;
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
@@ -36,7 +36,7 @@ public class UserApiLogicService {
     }
 
     @Transactional
-    public UserApiResponse register(UserApiRequest request) {
+    public UserResponse register(UserRequest request) {
         Optional<User> optional = userRepository.findByNickname(request.getNickname());
 
         if (optional.isPresent()){
@@ -53,8 +53,8 @@ public class UserApiLogicService {
         return response(user);
     }
 
-    private UserApiResponse response(User user){
-        return UserApiResponse.builder()
+    private UserResponse response(User user){
+        return UserResponse.builder()
                 .nickname(user.getNickname())
                 .token(jwtProvider.createToken(user.getNickname()))
                 .build();

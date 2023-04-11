@@ -11,8 +11,8 @@ import com.example.lovedocumentbackend.domain.ideal.repository.*;
 import com.example.lovedocumentbackend.domain.question.entity.Question;
 import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
 import com.example.lovedocumentbackend.domain.question.repository.QuestionRepository;
-import com.example.lovedocumentbackend.domain.question.dto.request.QuestionApiRequest;
-import com.example.lovedocumentbackend.domain.question.dto.response.QuestionApiResponse;
+import com.example.lovedocumentbackend.domain.question.dto.request.QuestionRequest;
+import com.example.lovedocumentbackend.domain.question.dto.response.QuestionResponse;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
 import com.example.lovedocumentbackend.enumclass.QuestionType;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionApiLogicService {
+public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final QuestionGroupRepository questionGroupRepository;
@@ -46,7 +46,7 @@ public class QuestionApiLogicService {
     // 회원가입시 질문지 생성
     // 생성은 한번만 가능함
     @Transactional
-    public void firstMakeQuestions(String nickName ,QuestionApiRequest request) {
+    public void firstMakeQuestions(String nickName , QuestionRequest request) {
         User user = userRepository.findByNickname(nickName).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
 
         QuestionGroup questionGroup = QuestionGroup.builder()
@@ -75,7 +75,7 @@ public class QuestionApiLogicService {
         });
     }
 
-    public List<QuestionApiResponse> getIdeal(String nickname) {
+    public List<QuestionResponse> getIdeal(String nickname) {
         User user = userRepository.findByNickname(nickname).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
         QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
         Optional<Ideal> ideal = idealRepository.findByQuestionGroupId(questionGroup.getId());
@@ -87,19 +87,19 @@ public class QuestionApiLogicService {
         return toResponse(questionList, categoryList,ideal);
     }
 
-    private List<QuestionApiResponse> toResponse(List<Question> questionList, Set<Category> categoryList, Optional<Ideal> ideal) {
-        List<QuestionApiResponse> questionApiResponseList = new ArrayList<>();
+    private List<QuestionResponse> toResponse(List<Question> questionList, Set<Category> categoryList, Optional<Ideal> ideal) {
+        List<QuestionResponse> questionApiResponseList = new ArrayList<>();
 
         categoryList.forEach(category -> {
-            List<QuestionApiResponse.CategoryItemInfo> categoryItemInfoList = new ArrayList<>();
+            List<QuestionResponse.CategoryItemInfo> categoryItemInfoList = new ArrayList<>();
 
             questionList.forEach(question -> {
                 if (Objects.equals(category.getId(), question.getCategoryId())){
                     List<CategoryItemExample> categoryItemExampleList = categoryItemExampleRepository.findAllByCategoryItemId(question.getCategoryItemId());
 
-                    List<QuestionApiResponse.Example> contents = categoryItemExampleList.stream()
+                    List<QuestionResponse.Example> contents = categoryItemExampleList.stream()
                             .map(CategoryItemExample -> {
-                                return QuestionApiResponse.Example.builder()
+                                return QuestionResponse.Example.builder()
                                         .id(CategoryItemExample.getId())
                                         .content(CategoryItemExample.getContent())
                                         .build();
@@ -142,7 +142,7 @@ public class QuestionApiLogicService {
                     });
 
 
-                    QuestionApiResponse.CategoryItemInfo categoryItemInfo = QuestionApiResponse.CategoryItemInfo.builder()
+                    QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
                             .id(question.getCategoryItem().getId())
                             .multiple(question.getCategoryItem().getIdealMultiple())
                             .type(question.getCategoryItem().getType())
@@ -160,7 +160,7 @@ public class QuestionApiLogicService {
                 }
             });
 
-            QuestionApiResponse questionApiResponse = QuestionApiResponse.builder()
+            QuestionResponse questionApiResponse = QuestionResponse.builder()
                     .categoryTitle(category.getTitle())
                     .categoryItemInfoList(categoryItemInfoList)
                     .build();
