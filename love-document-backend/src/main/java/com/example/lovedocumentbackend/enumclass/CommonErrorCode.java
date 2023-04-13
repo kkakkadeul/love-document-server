@@ -26,6 +26,9 @@ public enum CommonErrorCode implements ErrorCode {
     //Category
     NOT_FOUND_CATEGORY_ITEM(HttpStatus.NOT_FOUND, "카테고리 아이템을 찾을 수 없어요.", "C001"),
     NOT_FOUND_CATEGORY_ITEM_EXAMPLE(HttpStatus.NOT_FOUND, "카테고리 아이템 예시를 찾을 수 없어요.", "C002"),
+
+    // Token
+    TOKEN_GENERATION_ERROR(HttpStatus.NOT_FOUND, "토큰이 비어있습니다.", "T001"),
     //All
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러예요.", "A000"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "데이터가 존재하지 않아요.", "A001"),

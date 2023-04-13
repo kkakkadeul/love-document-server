@@ -54,9 +54,14 @@ public class UserService {
     }
 
     private UserResponse response(User user){
+        String token = jwtProvider.createToken(user.getNickname());
+
+        if (token == null) {
+            throw new RestApiException(CommonErrorCode.TOKEN_GENERATION_ERROR);
+        }
         return UserResponse.builder()
                 .nickname(user.getNickname())
-                .token(jwtProvider.createToken(user.getNickname()))
+                .token(token)
                 .build();
     }
 
