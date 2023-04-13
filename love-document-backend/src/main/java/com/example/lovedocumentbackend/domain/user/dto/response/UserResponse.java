@@ -19,7 +19,4 @@ public class UserResponse {
     @Schema(description = "유저 JWT 토큰", example = "sdfjhqklndklmsd;lm;lsd;lsdmv")
     private String token;
 
-    public UserResponse(User user) {
-        this.nickname = user.getNickname();
-    }
 }
