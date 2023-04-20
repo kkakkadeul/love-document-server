@@ -1,6 +1,9 @@
 package com.example.lovedocumentbackend.domain.user.controller;
 
+import com.example.lovedocumentbackend.SuccessResponse;
 import com.example.lovedocumentbackend.config.ApiDocumentResponse;
+import com.example.lovedocumentbackend.domain.user.dto.request.NicknameCheckRequest;
+import com.example.lovedocumentbackend.domain.user.dto.response.UserInfoResponse;
 import com.example.lovedocumentbackend.domain.user.dto.response.UserResponse;
 import com.example.lovedocumentbackend.domain.user.service.UserService;
 import com.example.lovedocumentbackend.domain.user.dto.request.UserRequest;
@@ -17,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +57,31 @@ public class UserController {
         validBindingResult(result);
 
         return new ResponseEntity<>(userApiLogicService.register(request), HttpStatus.OK);
+    }
+
+    // 유저 정보 조회
+    @ApiDocumentResponse
+    @Operation(summary = "닉네임 중복 확인", description = "닉네임 중복 체크")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "입력 오류", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "닉네임 사용중", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping("/nickname")
+    public ResponseEntity<SuccessResponse> nicknameCheck(@RequestBody @Valid NicknameCheckRequest request, BindingResult result){
+        validBindingResult(result);
+
+        return new ResponseEntity<>(userApiLogicService.nicknameCheck(request), HttpStatus.OK);
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "유저 정보 조회", description = "닉네임, 선택 카테고리 개수, 링크 아이디")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = UserInfoResponse.class))),
+    })
+    @GetMapping("")
+    public ResponseEntity<UserInfoResponse> userInfo(Authentication authentication){
+        return new ResponseEntity<>(userApiLogicService.getUserInfo(authentication.getName()), HttpStatus.OK);
     }
 
     private void validBindingResult(BindingResult result) {
