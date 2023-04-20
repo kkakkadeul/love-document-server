@@ -21,7 +21,7 @@ public class QuestionGroup extends BaseEntity {
     private Long id;
 
     @Setter
-    private String link;
+    private Long linkId;
 
     private Integer itemNum;
 

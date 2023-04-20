@@ -57,9 +57,9 @@ public class QuestionService {
 
         QuestionGroup savedQuestionGroup = questionGroupRepository.save(questionGroup);
 
-        String link = "/research/"+savedQuestionGroup.getId();
+        Long linkId = savedQuestionGroup.getId();
 
-        savedQuestionGroup.setLink(link);
+        savedQuestionGroup.setLinkId(linkId);
         QuestionGroup newSavedQuestionGroup = questionGroupRepository.save(savedQuestionGroup);
 
         request.getCategoryItems().forEach(id -> {
