@@ -3,6 +3,7 @@ package com.example.lovedocumentbackend.domain.user.controller;
 import com.example.lovedocumentbackend.SuccessResponse;
 import com.example.lovedocumentbackend.config.ApiDocumentResponse;
 import com.example.lovedocumentbackend.domain.user.dto.request.NicknameCheckRequest;
+import com.example.lovedocumentbackend.domain.user.dto.response.UserCategoryResponse;
 import com.example.lovedocumentbackend.domain.user.dto.response.UserInfoResponse;
 import com.example.lovedocumentbackend.domain.user.dto.response.UserResponse;
 import com.example.lovedocumentbackend.domain.user.service.UserService;
@@ -23,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "User", description = "User api")
 @RequiredArgsConstructor
@@ -82,6 +85,16 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity<UserInfoResponse> userInfo(Authentication authentication){
         return new ResponseEntity<>(userApiLogicService.getUserInfo(authentication.getName()), HttpStatus.OK);
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "유저 카테고리 조회", description = "유저 선택 카테고리 목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = UserCategoryResponse.class))),
+    })
+    @GetMapping("/categories")
+    public ResponseEntity<List<UserCategoryResponse>> userCategories(Authentication authentication){
+        return new ResponseEntity<>(userApiLogicService.getUserCategories(authentication.getName()), HttpStatus.OK);
     }
 
     private void validBindingResult(BindingResult result) {
