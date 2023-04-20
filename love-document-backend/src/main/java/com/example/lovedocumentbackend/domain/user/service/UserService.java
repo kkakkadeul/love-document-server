@@ -1,10 +1,18 @@
 package com.example.lovedocumentbackend.domain.user.service;
 
+import com.example.lovedocumentbackend.SuccessResponse;
 import com.example.lovedocumentbackend.auth.JwtProvider;
+import com.example.lovedocumentbackend.domain.question.entity.Question;
+import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
+import com.example.lovedocumentbackend.domain.question.repository.QuestionGroupRepository;
+import com.example.lovedocumentbackend.domain.question.repository.QuestionRepository;
+import com.example.lovedocumentbackend.domain.user.dto.request.NicknameCheckRequest;
+import com.example.lovedocumentbackend.domain.user.dto.response.UserInfoResponse;
 import com.example.lovedocumentbackend.domain.user.repository.UserRepository;
 import com.example.lovedocumentbackend.domain.user.dto.request.UserRequest;
 import com.example.lovedocumentbackend.domain.user.dto.response.UserResponse;
 import com.example.lovedocumentbackend.domain.user.entity.User;
+import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
 import com.example.lovedocumentbackend.exception.RestApiException;
 import jakarta.transaction.Transactional;
@@ -12,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -19,12 +28,14 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final QuestionGroupRepository questionGroupRepository;
+    private final QuestionRepository questionRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
    @Transactional
     public UserResponse login(UserRequest request) {
-        User user = userRepository.findByNickname(request.getNickname()).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));;
+        User user = userRepository.findByNickname(request.getNickname()).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             throw new RestApiException(CommonErrorCode.PASSWORD_ERR);
@@ -51,6 +62,26 @@ public class UserService {
         userRepository.save(user);
 
         return response(user);
+    }
+
+    public SuccessResponse nicknameCheck(NicknameCheckRequest request){
+       Optional<User> user = userRepository.findByNickname(request.getNickname());
+       if(user.isPresent()){
+           throw new RestApiException(CommonErrorCode.AlREADY_USER);
+       }
+
+       return SuccessResponse.builder().message("사용 가능한 닉네임이예요.").build();
+    }
+
+    public UserInfoResponse getUserInfo(String nickname){
+        User user = userRepository.findByNickname(nickname).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
+        QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
+
+       return UserInfoResponse.builder()
+               .nickname(nickname)
+               .categoryNum(questionGroup.getItemNum())
+               .linkId(questionGroup.getLinkId())
+               .build();
     }
 
     private UserResponse response(User user){
