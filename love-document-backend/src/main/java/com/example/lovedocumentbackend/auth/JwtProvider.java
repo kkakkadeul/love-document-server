@@ -25,8 +25,7 @@ public class JwtProvider {
     @Value("${jwt.secret.key}")
     private String salt;
     private Key secretKey;
-    private final long exp = 1000L * 60 * 60;
-//    private final long exp = 1L;
+    private final long exp = 1000000000000000L * 60 * 60;
 
 
     private final JpaUserDetailsService userDetailsService;

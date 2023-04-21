@@ -26,12 +26,12 @@ public class IdealRequest {
         private List<Long> choiceIdList;
 
         @Schema(description = "범위 숫자 리스트(2개)", example = "[160,180]")
-        private List<Integer> rangeNumList;
+        private List<Integer> rangeList;
 
-        @Schema(description = "점수 숫자 리스트(1개)", example = "[4]")
-        private List<Integer> scoreNumList;
+        @Schema(description = "점수", example = "4")
+        private Integer score;
 
-        @Schema(description = "예스 올 노우 리스트(1개)", example = "[N]")
-        private List<BooleanType> ynBoolList;
+        @Schema(description = "Y or N", example = "N")
+        private BooleanType yn;
     }
 }
