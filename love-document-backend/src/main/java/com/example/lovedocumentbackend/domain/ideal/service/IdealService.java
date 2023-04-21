@@ -70,36 +70,36 @@ public class IdealService {
             QuestionType questionType = ideal.getQuestionType();
 
             if (questionType == QuestionType.RANGE){
-                if (ideal.getRangeNumList().size() == 0){
+                if (ideal.getRangeList().size() == 0){
                     throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_IDEAL);
                 }
 
                 IdealRange idealRange = IdealRange.builder()
-                        .more(ideal.getRangeNumList().get(0))
-                        .less(ideal.getRangeNumList().get(1))
+                        .more(ideal.getRangeList().get(0))
+                        .less(ideal.getRangeList().get(1))
                         .categoryItem(categoryItem)
                         .ideal(userIdeal)
                         .build();
                 idealRangeRepository.save(idealRange);
             } else if (questionType == QuestionType.YN) {
-                if (ideal.getYnBoolList().size() == 0){
+                if (ideal.getYn() == null){
                     throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_IDEAL);
                 }
 
                 IdealYn idealYn = IdealYn.builder()
-                        .content(ideal.getYnBoolList().get(0))
+                        .content(ideal.getYn())
                         .ideal(userIdeal)
                         .categoryItem(categoryItem)
                         .build();
                 idealYnRepository.save(idealYn);
 
             } else if (questionType == QuestionType.SCORE) {
-                if (ideal.getScoreNumList().size() == 0){
+                if (ideal.getScore() == null){
                     throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_IDEAL);
                 }
 
                 IdealScore idealScore = IdealScore.builder()
-                        .score(ideal.getScoreNumList().get(0))
+                        .score(ideal.getScore())
                         .ideal(userIdeal)
                         .categoryItem(categoryItem)
                         .build();
