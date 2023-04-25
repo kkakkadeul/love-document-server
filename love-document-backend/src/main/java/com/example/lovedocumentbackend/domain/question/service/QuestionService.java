@@ -8,6 +8,7 @@ import com.example.lovedocumentbackend.domain.category.repository.CategoryItemRe
 import com.example.lovedocumentbackend.domain.category.repository.CategoryRepository;
 import com.example.lovedocumentbackend.domain.ideal.entity.*;
 import com.example.lovedocumentbackend.domain.ideal.repository.*;
+import com.example.lovedocumentbackend.domain.question.dto.response.AnswerQuestionResponse;
 import com.example.lovedocumentbackend.domain.question.entity.Question;
 import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
 import com.example.lovedocumentbackend.domain.question.repository.QuestionRepository;
@@ -234,5 +235,50 @@ public class QuestionService {
         return questionApiResponseList;
     }
 
+    public List<AnswerQuestionResponse> getAnswer(Long questionId) {
+        QuestionGroup questionGroup = questionGroupRepository.findById(questionId).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
+        User user = userRepository.findById(questionGroup.getUser().getId()).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
+        List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId());
+        Set<Category> categoryList = questionList.stream()
+                .map(Question::getCategory)
+                .collect(Collectors.toSet());
+        List<AnswerQuestionResponse> answerResponse = new ArrayList<>();
 
+        categoryList.forEach(category -> {
+            List<AnswerQuestionResponse.CategoryItemInfo> categoryItemInfoList = new ArrayList<>();
+
+            questionList.forEach(question -> {
+                if(Objects.equals(category.getTitle(), question.getCategory().getTitle())){
+                    List<CategoryItemExample> categoryItemExampleList = categoryItemExampleRepository.findAllByCategoryItemId(question.getCategoryItemId());
+
+                    List<AnswerQuestionResponse.Example> contents = categoryItemExampleList.stream()
+                            .map(CategoryItemExample -> {
+                                return AnswerQuestionResponse.Example.builder()
+                                        .id(CategoryItemExample.getId())
+                                        .content(CategoryItemExample.getContent())
+                                        .build();
+                            }).toList();
+
+                    AnswerQuestionResponse.CategoryItemInfo categoryItemInfo = AnswerQuestionResponse.CategoryItemInfo.builder()
+                            .id(question.getCategoryItem().getId())
+                            .multiple(question.getCategoryItem().getAnswerMultiple())
+                            .type(question.getCategoryItem().getType())
+                            .question(question.getCategoryItem().getAnswerQuestion())
+                            .negativeLabel(question.getCategoryItem().getAnswerNegativeLabel())
+                            .positiveLabel(question.getCategoryItem().getAnswerPositiveLabel())
+                            .exampleList(contents)
+                            .build();
+
+                    categoryItemInfoList.add(categoryItemInfo);
+                }
+            });
+
+            answerResponse.add(AnswerQuestionResponse.builder()
+                            .categoryTitle(category.getTitle())
+                            .categoryItemInfoList(categoryItemInfoList)
+                    .build());
+        });
+
+        return answerResponse;
+    }
 }
