@@ -117,6 +117,21 @@ public class QuestionService {
                             idealYn.ifPresent(yn -> {
                                 ynBoolList.add(yn.getContent());
                             });
+                            QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                                    .id(question.getCategoryItem().getId())
+                                    .multiple(question.getCategoryItem().getIdealMultiple())
+                                    .type(question.getCategoryItem().getType())
+                                    .question(question.getCategoryItem().getIdealQuestion())
+                                    .negativeLabel(question.getCategoryItem().getIdealNegativeLabel())
+                                    .positiveLabel(question.getCategoryItem().getIdealPositiveLabel())
+                                    .choiceIdList(null)
+                                    .rangeList(null)
+                                    .score(null)
+                                    .yn(ynBoolList.get(0))
+                                    .exampleList(contents)
+                                    .build();
+
+                            categoryItemInfoList.add(categoryItemInfo);
 
                         } else if (question.getCategoryItem().getType() == QuestionType.RANGE) {
                             Optional<IdealRange> idealRange = idealRangeRepository.findByIdealAndCategoryItem(userIdeal, question.getCategoryItem());
@@ -124,12 +139,43 @@ public class QuestionService {
                                 rangeNumList.add(range.getMore());
                                 rangeNumList.add(range.getLess());
                             });
+                            QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                                    .id(question.getCategoryItem().getId())
+                                    .multiple(question.getCategoryItem().getIdealMultiple())
+                                    .type(question.getCategoryItem().getType())
+                                    .question(question.getCategoryItem().getIdealQuestion())
+                                    .negativeLabel(question.getCategoryItem().getIdealNegativeLabel())
+                                    .positiveLabel(question.getCategoryItem().getIdealPositiveLabel())
+                                    .choiceIdList(null)
+                                    .rangeList(rangeNumList)
+                                    .score(null)
+                                    .yn(null)
+                                    .exampleList(contents)
+                                    .build();
+
+                            categoryItemInfoList.add(categoryItemInfo);
 
                         } else if (question.getCategoryItem().getType() == QuestionType.SCORE) {
                             Optional<IdealScore> idealScore = idealScoreRepository.findByIdealAndCategoryItem(userIdeal, question.getCategoryItem());
                             idealScore.ifPresent(score -> {
                                 scoreNumList.add(score.getScore());
                             });
+
+                            QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                                    .id(question.getCategoryItem().getId())
+                                    .multiple(question.getCategoryItem().getIdealMultiple())
+                                    .type(question.getCategoryItem().getType())
+                                    .question(question.getCategoryItem().getIdealQuestion())
+                                    .negativeLabel(question.getCategoryItem().getIdealNegativeLabel())
+                                    .positiveLabel(question.getCategoryItem().getIdealPositiveLabel())
+                                    .choiceIdList(null)
+                                    .rangeList(null)
+                                    .score(scoreNumList.get(0))
+                                    .yn(null)
+                                    .exampleList(contents)
+                                    .build();
+
+                            categoryItemInfoList.add(categoryItemInfo);
 
                         } else if (question.getCategoryItem().getType() == QuestionType.CHOICE) {
                             categoryItemExampleList.forEach(ex -> {
@@ -138,25 +184,42 @@ public class QuestionService {
                                     choiceIdList.add(choice.getId());
                                 });
                             });
+
+                            QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                                    .id(question.getCategoryItem().getId())
+                                    .multiple(question.getCategoryItem().getIdealMultiple())
+                                    .type(question.getCategoryItem().getType())
+                                    .question(question.getCategoryItem().getIdealQuestion())
+                                    .negativeLabel(question.getCategoryItem().getIdealNegativeLabel())
+                                    .positiveLabel(question.getCategoryItem().getIdealPositiveLabel())
+                                    .choiceIdList(choiceIdList)
+                                    .rangeList(null)
+                                    .score(null)
+                                    .yn(null)
+                                    .exampleList(contents)
+                                    .build();
+
+                            categoryItemInfoList.add(categoryItemInfo);
                         }
                     });
 
-
-                    QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                    if(ideal.isEmpty()){
+                        QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
                             .id(question.getCategoryItem().getId())
                             .multiple(question.getCategoryItem().getIdealMultiple())
                             .type(question.getCategoryItem().getType())
                             .question(question.getCategoryItem().getIdealQuestion())
                             .negativeLabel(question.getCategoryItem().getIdealNegativeLabel())
                             .positiveLabel(question.getCategoryItem().getIdealPositiveLabel())
-                            .choiceIdList(choiceIdList)
-                            .rangeNumList(rangeNumList)
-                            .scoreNumList(scoreNumList)
-                            .ynBoolList(ynBoolList)
+                            .choiceIdList(null)
+                            .rangeList(null)
+                            .score(null)
+                            .yn(null)
                             .exampleList(contents)
                             .build();
 
-                    categoryItemInfoList.add(categoryItemInfo);
+                            categoryItemInfoList.add(categoryItemInfo);
+                    }
                 }
             });
 

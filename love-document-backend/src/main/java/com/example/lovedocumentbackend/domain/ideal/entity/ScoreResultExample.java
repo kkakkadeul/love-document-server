@@ -1,7 +1,6 @@
 package com.example.lovedocumentbackend.domain.ideal.entity;
 
-import com.example.lovedocumentbackend.BaseEntity;
-import com.example.lovedocumentbackend.domain.category.entity.CategoryItemExample;
+import com.example.lovedocumentbackend.domain.category.entity.CategoryItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,16 +11,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Table(name="score_result_example")
 @Entity
-public class IdealChoice extends BaseEntity {
+public class ScoreResultExample {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Ideal ideal;
+    private Integer answer;
+
+    private String idealResult;
+
+    private String answerResult;
 
     @ManyToOne
-    private CategoryItemExample categoryItemExample;
+    @JoinColumn(name="category_item_id")
+    private CategoryItem categoryItem;
 }

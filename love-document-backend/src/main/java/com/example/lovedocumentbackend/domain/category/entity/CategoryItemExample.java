@@ -2,6 +2,7 @@ package com.example.lovedocumentbackend.domain.category.entity;
 
 
 import com.example.lovedocumentbackend.BaseEntity;
+import com.example.lovedocumentbackend.domain.ideal.entity.ChoiceResultExample;
 import com.example.lovedocumentbackend.domain.ideal.entity.IdealChoice;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,4 +29,7 @@ public class CategoryItemExample extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItemExample")
     private List<IdealChoice> idealChoiceList;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "categoryItemExample")
+    private ChoiceResultExample choiceResultExample;
 }
