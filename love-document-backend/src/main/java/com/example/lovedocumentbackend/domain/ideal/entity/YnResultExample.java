@@ -1,31 +1,33 @@
 package com.example.lovedocumentbackend.domain.ideal.entity;
 
-
-import com.example.lovedocumentbackend.BaseEntity;
 import com.example.lovedocumentbackend.domain.category.entity.CategoryItem;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-
-@ToString(exclude ={"ideal", "categoryItem"})
 @Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Getter
 @Entity
-public class IdealYn extends BaseEntity {
+@Table(name="yn_result_example")
+public class YnResultExample {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private BooleanType content;
+    private BooleanType answer;
+
+    private String idealResult;
+
+    private String answerResult;
 
     @ManyToOne
-    private Ideal ideal;
-
-    @ManyToOne
+    @JoinColumn(name="category_item_id")
     private CategoryItem categoryItem;
 }

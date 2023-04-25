@@ -21,7 +21,9 @@ public enum CommonErrorCode implements ErrorCode {
     NOT_FOUND_QUESTION(HttpStatus.NOT_FOUND, "질문을 찾을 수 없어요.", "Q001"),
 
     //Ideal
+    NOT_FOUND_IDEAL(HttpStatus.NOT_FOUND, "답안을 찾을 수 없어요.", "I001"),
     INVALID_PARAMETER_IDEAL(HttpStatus.BAD_REQUEST, "타입별 데이터 입력이 잘 못 되었어요.", "I002"),
+    AlREADY_IDEAL_REQUEST(HttpStatus.CONFLICT, "중복된 요청이예요.", "I003"),
 
     //Category
     NOT_FOUND_CATEGORY_ITEM(HttpStatus.NOT_FOUND, "카테고리 아이템을 찾을 수 없어요.", "C001"),

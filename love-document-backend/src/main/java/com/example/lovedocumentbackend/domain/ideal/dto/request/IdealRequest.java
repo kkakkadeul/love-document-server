@@ -4,6 +4,8 @@ package com.example.lovedocumentbackend.domain.ideal.dto.request;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.QuestionType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 
 import java.util.List;
@@ -32,6 +34,7 @@ public class IdealRequest {
         private Integer score;
 
         @Schema(description = "Y or N", example = "N")
+        @Enumerated(EnumType.STRING)
         private BooleanType yn;
     }
 }

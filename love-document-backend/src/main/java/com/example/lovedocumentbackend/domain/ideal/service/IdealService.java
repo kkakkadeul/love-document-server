@@ -1,11 +1,15 @@
 package com.example.lovedocumentbackend.domain.ideal.service;
 
+import com.example.lovedocumentbackend.domain.category.entity.Category;
 import com.example.lovedocumentbackend.domain.category.entity.CategoryItem;
 import com.example.lovedocumentbackend.domain.category.entity.CategoryItemExample;
 import com.example.lovedocumentbackend.domain.ideal.dto.request.IdealRequest;
+import com.example.lovedocumentbackend.domain.ideal.dto.response.IdealResponse;
 import com.example.lovedocumentbackend.domain.ideal.entity.*;
 import com.example.lovedocumentbackend.domain.ideal.repository.*;
+import com.example.lovedocumentbackend.domain.question.entity.Question;
 import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
+import com.example.lovedocumentbackend.domain.question.repository.QuestionRepository;
 import com.example.lovedocumentbackend.domain.user.entity.User;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
@@ -19,7 +23,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -33,18 +38,80 @@ public class IdealService {
     private final IdealChoiceRepository idealChoiceRepository;
     private final UserRepository userRepository;
     private final QuestionGroupRepository questionGroupRepository;
+    private final QuestionRepository questionRepository;
     private final CategoryItemRepository categoryItemRepository;
     private final CategoryItemExampleRepository categoryItemExampleRepository;
 
+    private final IdealResult idealResult;
+
     // 유저 답안 불러오기
-    public void userIdeal(){
+    public List<IdealResponse> userIdeal(String nickname){
 
         // 유저의 questionGroup 찾기
+        User user = userRepository.findByNickname(nickname).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
+        QuestionGroup userQuestionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
+        Optional<Ideal> idealOptional = idealRepository.findByQuestionGroupId(userQuestionGroup.getId());
+        List<Question> questionList = questionRepository.findAllByQuestionGroupId(userQuestionGroup.getId());
 
-        // 해당 id로 ideal 찾기
+        List<CategoryItem> categoryItemList = new ArrayList<>();
+        Set<Category> categoryList = questionList.stream()
+                .map(Question::getCategory)
+                .collect(Collectors.toSet());
 
-        // 해당 ideal 목록 가져와서 카테고리랑 묶어서 반환
+        questionList.forEach(question -> {
+            categoryItemList.add(categoryItemRepository.findById(question.getCategoryItemId()).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_CATEGORY_ITEM)));
+        });
 
+        List<IdealResponse> idealList = new ArrayList<>();
+
+        if (idealOptional.isPresent()){
+            idealOptional.ifPresent(ideal -> {
+                categoryList.forEach(category -> {
+                    List<IdealResponse.IdealInfo> idealInfoList = new ArrayList<>();
+
+                    categoryItemList.forEach(categoryItem -> {
+                        if(Objects.equals(categoryItem.getCategory().getTitle(), category.getTitle())){
+                            IdealResponse.IdealInfo idealInfo = IdealResponse.IdealInfo.builder()
+                                    .categoryTitle(categoryItem.getTitle())
+                                    .ideal(idealResult.makeIdealResult(ideal, categoryItem))
+                                    .build();
+                            idealInfoList.add(idealInfo);
+                        }
+                    });
+
+                    IdealResponse idealResponse = IdealResponse.builder()
+                            .categoryTitle(category.getTitle())
+                            .idealInfoList(idealInfoList)
+                            .build();
+
+                    idealList.add(idealResponse);
+                });
+            });
+        } else{
+            categoryList.forEach(category -> {
+                List<IdealResponse.IdealInfo> idealInfoList = new ArrayList<>();
+
+                categoryItemList.forEach(categoryItem -> {
+                    if(Objects.equals(categoryItem.getCategory().getTitle(), category.getTitle())){
+                        IdealResponse.IdealInfo idealInfo = IdealResponse.IdealInfo.builder()
+                                .categoryTitle(categoryItem.getTitle())
+                                .ideal(null)
+                                .build();
+                        idealInfoList.add(idealInfo);
+                    }
+                });
+
+                IdealResponse idealResponse = IdealResponse.builder()
+                        .categoryTitle(category.getTitle())
+                        .idealInfoList(idealInfoList)
+                        .build();
+
+                idealList.add(idealResponse);
+            });
+        }
+
+
+        return idealList;
     }
 
     // 유저 답안 저장 로직
@@ -55,7 +122,11 @@ public class IdealService {
         QuestionGroup userQuestionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
         Optional<Ideal> optional = idealRepository.findByQuestionGroupId(userQuestionGroup.getId());
 
-        optional.ifPresent(idealRepository::delete);
+//        optional.ifPresent(idealRepository::delete);
+
+        if (optional.isPresent()){
+            throw new RestApiException(CommonErrorCode.AlREADY_IDEAL_REQUEST);
+        }
 
         // questionGroup id로 ideal 생성
         Ideal newIdeal = Ideal.builder()
@@ -123,6 +194,7 @@ public class IdealService {
 
             }
         });
+
     }
 
 }

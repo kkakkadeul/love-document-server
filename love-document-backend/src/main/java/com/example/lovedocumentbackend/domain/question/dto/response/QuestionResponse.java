@@ -54,13 +54,13 @@ public class QuestionResponse {
         private List<Long> choiceIdList;
 
         @Schema(description = "RANGE int 리스트 or null ", example = "[160, 180]")
-        private List<Integer> rangeNumList;
+        private List<Integer> rangeList;
 
-        @Schema(description = "SCORE int 리스트 or null ", example = "[3]")
-        private List<Integer> scoreNumList;
+        @Schema(description = "SCORE 값 or null ", example = "3")
+        private Integer score;
 
-        @Schema(description = "YN string 리스트 or null ", example = "[Y]")
-        private List<BooleanType> ynBoolList;
+        @Schema(description = "YN 값 or null ", example = "Y")
+        private BooleanType yn;
     }
 
     @Getter
