@@ -3,6 +3,7 @@ package com.example.lovedocumentbackend.domain.user.controller;
 import com.example.lovedocumentbackend.SuccessResponse;
 import com.example.lovedocumentbackend.config.ApiDocumentResponse;
 import com.example.lovedocumentbackend.domain.user.dto.request.NicknameCheckRequest;
+import com.example.lovedocumentbackend.domain.user.dto.response.UserAnswersResponse;
 import com.example.lovedocumentbackend.domain.user.dto.response.UserCategoryResponse;
 import com.example.lovedocumentbackend.domain.user.dto.response.UserInfoResponse;
 import com.example.lovedocumentbackend.domain.user.dto.response.UserResponse;
@@ -95,6 +96,16 @@ public class UserController {
     @GetMapping("/categories")
     public ResponseEntity<List<UserCategoryResponse>> userCategories(Authentication authentication){
         return new ResponseEntity<>(userApiLogicService.getUserCategories(authentication.getName()), HttpStatus.OK);
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "답변 목록 조회", description = "유저의 질문에 답변한 목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = UserAnswersResponse.class))),
+    })
+    @GetMapping("/answers")
+    public ResponseEntity<List<UserAnswersResponse>> userAnswers(Authentication authentication){
+        return new ResponseEntity<>(userApiLogicService.getUserAnswers(authentication.getName()), HttpStatus.OK);
     }
 
     private void validBindingResult(BindingResult result) {

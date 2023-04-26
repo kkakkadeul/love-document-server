@@ -87,4 +87,7 @@ public class CategoryItem extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
     private List<AnswerChoice> answerChoiceList;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
+    private List<IdealChoice> idealChoiceList;
+
 }

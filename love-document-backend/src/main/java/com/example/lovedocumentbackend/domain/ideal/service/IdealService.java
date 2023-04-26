@@ -186,6 +186,7 @@ public class IdealService {
 
                     IdealChoice idealChoice = IdealChoice.builder()
                             .ideal(userIdeal)
+                            .categoryItem(categoryItem)
                             .categoryItemExample(categoryItemExample)
                             .build();
 

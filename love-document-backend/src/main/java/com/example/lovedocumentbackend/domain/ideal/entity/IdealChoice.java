@@ -1,6 +1,7 @@
 package com.example.lovedocumentbackend.domain.ideal.entity;
 
 import com.example.lovedocumentbackend.BaseEntity;
+import com.example.lovedocumentbackend.domain.category.entity.CategoryItem;
 import com.example.lovedocumentbackend.domain.category.entity.CategoryItemExample;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,4 +25,7 @@ public class IdealChoice extends BaseEntity {
 
     @ManyToOne
     private CategoryItemExample categoryItemExample;
+
+    @ManyToOne
+    private CategoryItem categoryItem;
 }
