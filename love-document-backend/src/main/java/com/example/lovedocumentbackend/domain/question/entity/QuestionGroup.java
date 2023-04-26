@@ -1,11 +1,14 @@
 package com.example.lovedocumentbackend.domain.question.entity;
 
 import com.example.lovedocumentbackend.BaseEntity;
+import com.example.lovedocumentbackend.domain.answer.entity.Answer;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.domain.ideal.entity.Ideal;
 import com.example.lovedocumentbackend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @ToString(exclude = {"user"})
 @Builder
@@ -34,4 +37,7 @@ public class QuestionGroup extends BaseEntity {
 
     @OneToOne(mappedBy = "questionGroup")
     private Ideal ideal;
+
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "questionGroup")
+    private List<Answer> answerList;
 }
