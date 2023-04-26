@@ -2,12 +2,15 @@ package com.example.lovedocumentbackend.domain.user.service;
 
 import com.example.lovedocumentbackend.SuccessResponse;
 import com.example.lovedocumentbackend.auth.JwtProvider;
+import com.example.lovedocumentbackend.domain.answer.entity.Answer;
+import com.example.lovedocumentbackend.domain.answer.repository.AnswerRepository;
 import com.example.lovedocumentbackend.domain.category.entity.Category;
 import com.example.lovedocumentbackend.domain.question.entity.Question;
 import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
 import com.example.lovedocumentbackend.domain.question.repository.QuestionGroupRepository;
 import com.example.lovedocumentbackend.domain.question.repository.QuestionRepository;
 import com.example.lovedocumentbackend.domain.user.dto.request.NicknameCheckRequest;
+import com.example.lovedocumentbackend.domain.user.dto.response.UserAnswersResponse;
 import com.example.lovedocumentbackend.domain.user.dto.response.UserCategoryResponse;
 import com.example.lovedocumentbackend.domain.user.dto.response.UserInfoResponse;
 import com.example.lovedocumentbackend.domain.user.repository.UserRepository;
@@ -33,6 +36,8 @@ public class UserService {
     private final QuestionGroupRepository questionGroupRepository;
     private final QuestionRepository questionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AnswerRepository answerRepository;
+    private final MakePercentage makePercentage;
     private final JwtProvider jwtProvider;
 
    @Transactional
@@ -114,6 +119,27 @@ public class UserService {
         });
 
         return userCategoryResponseList;
+    }
+
+    public List<UserAnswersResponse> getUserAnswers(String nickname){
+       List<UserAnswersResponse> userAnswersResponseList = new ArrayList<>();
+       User user = userRepository.findByNickname(nickname).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
+       List<QuestionGroup> questionGroupList = questionGroupRepository.findAllByUserId(user.getId());
+
+       questionGroupList.forEach(questionGroup -> {
+           List<Answer> answerList = answerRepository.findAllByQuestionGroup(questionGroup);
+           answerList.forEach(answer -> {
+               userAnswersResponseList.add(UserAnswersResponse.builder()
+                               .show(answer.getUserShow())
+                               .percentage(makePercentage.getPercentage(questionGroup, answer))
+                               .age(answer.getAge())
+                               .live(answer.getLive())
+                               .nickname(answer.getNickname())
+                       .build());
+           });
+       });
+
+       return userAnswersResponseList;
     }
 
     private UserResponse response(User user){

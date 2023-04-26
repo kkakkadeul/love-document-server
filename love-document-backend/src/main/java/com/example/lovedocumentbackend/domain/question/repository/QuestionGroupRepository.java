@@ -13,7 +13,6 @@ import java.util.Optional;
 @Repository
 public interface QuestionGroupRepository extends JpaRepository<QuestionGroup, Long> {
     List<QuestionGroup> findAllByUserId(Long id);
-
     @Enumerated(EnumType.STRING)
     Optional<QuestionGroup> findByUserIdAndStatus(Long id, BooleanType status);
 }

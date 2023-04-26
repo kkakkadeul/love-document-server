@@ -34,8 +34,8 @@ public class AnswerRequest {
         @Schema(description = "카테고리 타입", example = "RANGE")
         private QuestionType questionType;
 
-        @Schema(description = "객관식 아이디 리스트", example = "[1,2,3]")
-        private List<Long> choiceIdList;
+        @Schema(description = "객관식 선택 아이디", example = "1")
+        private Long choiceId;
 
         @Schema(description = "키값 입력", example = "170")
         private Integer number;

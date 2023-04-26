@@ -9,6 +9,7 @@ import com.example.lovedocumentbackend.domain.category.repository.CategoryItemEx
 import com.example.lovedocumentbackend.domain.category.repository.CategoryItemRepository;
 import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
 import com.example.lovedocumentbackend.domain.question.repository.QuestionGroupRepository;
+import com.example.lovedocumentbackend.domain.user.service.MakePercentage;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
 import com.example.lovedocumentbackend.enumclass.QuestionType;
@@ -77,19 +78,17 @@ public class AnswerService {
                         .build();
                 answerScoreRepository.save(answerScore);
             }else if (questionType == QuestionType.CHOICE){
-                if(answer.getChoiceIdList().size()==0) throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_ANSWER);
+                if(answer.getChoiceId()==null) throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_ANSWER);
 
-                answer.getChoiceIdList().forEach(categoryItemExampleId -> {
-                    CategoryItemExample categoryItemExample = categoryItemExampleRepository.findById(categoryItemExampleId).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_CATEGORY_ITEM_EXAMPLE));
+                CategoryItemExample categoryItemExample = categoryItemExampleRepository.findById(answer.getChoiceId()).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_CATEGORY_ITEM_EXAMPLE));
 
-                    AnswerChoice answerChoice = AnswerChoice.builder()
+                AnswerChoice answerChoice = AnswerChoice.builder()
                             .answer(savedAnswer)
                             .categoryItem(categoryItem)
                             .categoryItemExample(categoryItemExample)
                             .build();
 
-                    answerChoiceRepository.save(answerChoice);
-                });
+                answerChoiceRepository.save(answerChoice);
             } else{
                 throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_ANSWER);
             }
