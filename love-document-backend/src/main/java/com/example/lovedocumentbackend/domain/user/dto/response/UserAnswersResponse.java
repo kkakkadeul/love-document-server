@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserAnswersResponse {
 
+    @Schema(description = "답변지 아이디", example = "답변지 아이디. 조회시 사용")
+    private Long answerId;
+
     @Schema(description = "답변자 닉네임", example = "망고")
     private String nickname;
 

@@ -92,7 +92,6 @@ public class UserService {
     }
 
     public List<UserCategoryResponse> getUserCategories(String nickname){
-       List<String> dummy = new ArrayList<>();
         User user = userRepository.findByNickname(nickname).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
         QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
         List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId());
@@ -130,6 +129,7 @@ public class UserService {
            List<Answer> answerList = answerRepository.findAllByQuestionGroup(questionGroup);
            answerList.forEach(answer -> {
                userAnswersResponseList.add(UserAnswersResponse.builder()
+                               .answerId(answer.getId())
                                .show(answer.getUserShow())
                                .percentage(makePercentage.getPercentage(questionGroup, answer))
                                .age(answer.getAge())
