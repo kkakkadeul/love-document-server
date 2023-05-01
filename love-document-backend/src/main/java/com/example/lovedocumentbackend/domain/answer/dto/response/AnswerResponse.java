@@ -39,6 +39,8 @@ public class AnswerResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     static public class CategoryInfo{
+        @Schema(description = "카테고리 이모티콘", example = "\uD83D\uDC40")
+        private String emoji;
         @Schema(description = "카테고리 제목", example = "외모")
         private String title;
         private List<Item> itemList;

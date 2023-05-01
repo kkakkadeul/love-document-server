@@ -107,7 +107,7 @@ public class AnswerService {
     @Transactional
     public AnswerResponse getAnswer(Long answerId, String nickname) {
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
-        Answer findAnswer = answerRepository.findById(answerId).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_ANSWER));
+        Answer findAnswer = answerRepository.findByIdAndStatus(answerId, BooleanType.Y).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_ANSWER));
 
         if(!Objects.equals(findAnswer.getQuestionGroup().getUser().getId(), user.getId())){
             throw new RestApiException(CommonErrorCode.DIFFRENT_USER_REQUEST);

@@ -48,6 +48,7 @@ public class CategoryService {
 
         CategoryResponse categoryApiResponse = CategoryResponse.builder()
                 .id(category.getId())
+                .emoji(category.getEmoji())
                 .title(category.getTitle())
                 .categoryItemList(categoryItemResponseList)
                 .build();

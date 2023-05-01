@@ -82,6 +82,7 @@ public class IdealService {
                     });
 
                     IdealResponse idealResponse = IdealResponse.builder()
+                            .emoji(category.getEmoji())
                             .categoryTitle(category.getTitle())
                             .idealInfoList(idealInfoList)
                             .build();

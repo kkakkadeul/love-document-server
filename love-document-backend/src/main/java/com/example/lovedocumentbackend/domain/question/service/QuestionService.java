@@ -226,6 +226,7 @@ public class QuestionService {
             });
 
             QuestionResponse questionApiResponse = QuestionResponse.builder()
+                    .emoji(category.getEmoji())
                     .categoryTitle(category.getTitle())
                     .categoryItemInfoList(categoryItemInfoList)
                     .build();
@@ -299,6 +300,7 @@ public class QuestionService {
             });
 
             answerResponse.add(AnswerQuestionResponse.builder()
+                            .emoji(category.getEmoji())
                             .categoryTitle(category.getTitle())
                             .categoryItemInfoList(categoryItemInfoList)
                     .build());

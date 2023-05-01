@@ -110,6 +110,7 @@ public class UserService {
             });
 
             UserCategoryResponse userCategoryResponse = UserCategoryResponse.builder()
+                    .emoji(category.getEmoji())
                     .categoryTitle(category.getTitle())
                     .categoryItemList(categoryItemList)
                     .build();

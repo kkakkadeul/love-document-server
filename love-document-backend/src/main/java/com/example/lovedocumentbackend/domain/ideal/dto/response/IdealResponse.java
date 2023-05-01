@@ -12,6 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 public class IdealResponse {
 
+    @Schema(description = "카테고리 이모티콘", example = "\uD83D\uDC40")
+    private String emoji;
+
     @Schema(description = "카테고리 title", example = "외모")
     private String categoryTitle;
 
