@@ -79,6 +79,7 @@ public class MakeAnswerResponse {
                 }
                 categoryInfoList.add(AnswerResponse.CategoryInfo.builder()
                                 .title(category.getTitle())
+                                .emoji(category.getEmoji())
                                 .itemList(itemList)
                         .build());
             });
@@ -188,6 +189,7 @@ public class MakeAnswerResponse {
                 }
                 categoryInfoList.add(AnswerResponse.CategoryInfo.builder()
                         .title(category.getTitle())
+                        .emoji(category.getEmoji())
                         .itemList(itemList)
                         .build());
             });

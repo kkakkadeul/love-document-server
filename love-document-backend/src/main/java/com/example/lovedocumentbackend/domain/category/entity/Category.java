@@ -26,6 +26,8 @@ public class Category {
 
     private String title;
 
+    private String emoji;
+
     @CreatedDate
     private LocalDateTime createdAt;
 

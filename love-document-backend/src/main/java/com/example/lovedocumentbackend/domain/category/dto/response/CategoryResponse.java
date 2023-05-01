@@ -17,6 +17,9 @@ public class CategoryResponse {
     @Schema(description = "카테고리 아이디", example = "1")
     private Long id;
 
+    @Schema(description = "카테고리 이모티콘", example = "\uD83D\uDC40")
+    private String emoji;
+
     @Schema(description = "카테고리 이름", example = "외모")
     private String title;
 

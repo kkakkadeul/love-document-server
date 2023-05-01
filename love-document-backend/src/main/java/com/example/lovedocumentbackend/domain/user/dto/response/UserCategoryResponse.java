@@ -15,6 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 public class UserCategoryResponse {
 
+    @Schema(description = "카테고리 이모티콘", example = "\uD83D\uDC40")
+    private String emoji;
+
     @Schema(description = "카테고리 이름", example = "외모")
     private String categoryTitle;
 
