@@ -15,7 +15,8 @@ public enum CommonErrorCode implements ErrorCode {
     PASSWORD_ERR(HttpStatus.NOT_FOUND, "비밀번호가 틀렸어요.", "U002"),
     INVALID_USER_NICKNAME(HttpStatus.BAD_REQUEST, "닉네임 형식이 틀렸어요.", "U003"),
     INVALID_USER_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호 형식이 틀렸어요.", "U004"),
-    AlREADY_USER(HttpStatus.CONFLICT, "중복된 유저예요.", "U005"),
+    DIFFRENT_USER_REQUEST(HttpStatus.BAD_REQUEST, "다른 사용자의 요청이예요.", "U005"),
+    AlREADY_USER(HttpStatus.CONFLICT, "중복된 유저예요.", "U006"),
 
     //Question
     NOT_FOUND_QUESTION(HttpStatus.NOT_FOUND, "질문을 찾을 수 없어요.", "Q001"),

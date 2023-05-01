@@ -44,4 +44,15 @@ public class AnswerController {
     public ResponseEntity<AnswerResponse> getAnswer(@PathVariable Long answerId, Authentication authentication){
         return new ResponseEntity<>(answerService.getAnswer(answerId, authentication.getName()),HttpStatus.OK);
     }
+
+    @ApiDocumentResponse
+    @Operation(summary = "선택 답변 삭제", description = "선택 답변 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = Void.class)))}),
+    })
+    @DeleteMapping("{answerId}")
+    public ResponseEntity<Void> deleteAnswer(@PathVariable Long answerId, Authentication authentication){
+        answerService.deleteAnswer(answerId, authentication.getName());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

@@ -125,7 +125,7 @@ public class UserService {
        List<QuestionGroup> questionGroupList = questionGroupRepository.findAllByUserId(user.getId());
 
        questionGroupList.forEach(questionGroup -> {
-           List<Answer> answerList = answerRepository.findAllByQuestionGroup(questionGroup);
+           List<Answer> answerList = answerRepository.findAllByQuestionGroupAndStatus(questionGroup, BooleanType.Y);
            answerList.forEach(answer -> {
                userAnswersResponseList.add(UserAnswersResponse.builder()
                                .answerId(answer.getId())
