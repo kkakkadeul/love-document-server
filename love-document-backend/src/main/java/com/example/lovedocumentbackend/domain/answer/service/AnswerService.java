@@ -10,6 +10,8 @@ import com.example.lovedocumentbackend.domain.category.repository.CategoryItemEx
 import com.example.lovedocumentbackend.domain.category.repository.CategoryItemRepository;
 import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
 import com.example.lovedocumentbackend.domain.question.repository.QuestionGroupRepository;
+import com.example.lovedocumentbackend.domain.user.entity.User;
+import com.example.lovedocumentbackend.domain.user.repository.UserRepository;
 import com.example.lovedocumentbackend.domain.user.service.MakePercentage;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
@@ -19,11 +21,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @Service
 public class AnswerService {
 
     private final QuestionGroupRepository questionGroupRepository;
+    private final UserRepository userRepository;
     private final AnswerRepository answerRepository;
     private final CategoryItemRepository categoryItemRepository;
     private final AnswerNumberRepository answerNumberRepository;
@@ -40,6 +45,7 @@ public class AnswerService {
         Answer newAnswer = Answer.builder()
                 .questionGroup(userQuestionGroup)
                 .userShow(BooleanType.N)
+                .status(BooleanType.Y)
                 .nickname(request.getNickname())
                 .age(request.getAge())
                 .work(request.getWork())
@@ -98,12 +104,33 @@ public class AnswerService {
         });
     }
 
+    @Transactional
     public AnswerResponse getAnswer(Long answerId, String nickname) {
+        User user = userRepository.findByNickname(nickname).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
         Answer findAnswer = answerRepository.findById(answerId).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_ANSWER));
+
+        if(!Objects.equals(findAnswer.getQuestionGroup().getUser().getId(), user.getId())){
+            throw new RestApiException(CommonErrorCode.DIFFRENT_USER_REQUEST);
+        }
+
         findAnswer.setUserShow(BooleanType.Y);
         Answer answer = answerRepository.save(findAnswer);
         QuestionGroup questionGroup = questionGroupRepository.findById(answer.getQuestionGroup().getId()).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
 
         return makeAnswerResponse.getAnswerResponse(questionGroup, answer);
+    }
+
+    @Transactional
+    public void deleteAnswer(Long answerId, String nickname){
+        User user = userRepository.findByNickname(nickname).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
+        Answer findAnswer = answerRepository.findById(answerId).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_ANSWER));
+
+        if(!Objects.equals(findAnswer.getQuestionGroup().getUser().getId(), user.getId())){
+            throw new RestApiException(CommonErrorCode.DIFFRENT_USER_REQUEST);
+        }
+
+        findAnswer.setStatus(BooleanType.N);
+        answerRepository.save(findAnswer);
+
     }
 }

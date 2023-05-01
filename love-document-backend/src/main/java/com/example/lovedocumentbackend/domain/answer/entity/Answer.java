@@ -32,6 +32,10 @@ public class Answer extends BaseEntity {
 
     private String live;
 
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private BooleanType status;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "answer")
     private List<AnswerYn> answerYnList;
 

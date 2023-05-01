@@ -40,9 +40,9 @@ public class QuestionController {
         return new ResponseEntity<>(questionApiLogicService.getAnswer(questionId), HttpStatus.OK);
     }
     @ApiDocumentResponse
-    @Operation(summary = "답변자 질문지 조회", description = "답변자의 질문 목록 조회")
+    @Operation(summary = "질문자 닉네임 조회", description = "질문지를 생성한 사람의 닉네임 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = AnswerQuestionResponse.class)))}),
+            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = QuestionNicknameResponse.class)))}),
     })
     @GetMapping("{questionId}/nickname")
     public ResponseEntity<QuestionNicknameResponse> getQuestionNickname(@PathVariable Long questionId) {
