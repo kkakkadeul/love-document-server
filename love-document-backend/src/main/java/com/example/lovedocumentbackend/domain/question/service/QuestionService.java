@@ -259,17 +259,32 @@ public class QuestionService {
                                         .build();
                             }).toList();
 
-                    AnswerQuestionResponse.CategoryItemInfo categoryItemInfo = AnswerQuestionResponse.CategoryItemInfo.builder()
-                            .id(question.getCategoryItem().getId())
-                            .multiple(question.getCategoryItem().getAnswerMultiple())
-                            .type(question.getCategoryItem().getType())
-                            .question(question.getCategoryItem().getAnswerQuestion())
-                            .negativeLabel(question.getCategoryItem().getAnswerNegativeLabel())
-                            .positiveLabel(question.getCategoryItem().getAnswerPositiveLabel())
-                            .exampleList(contents)
-                            .build();
+                    if(question.getCategoryItem().getType() == QuestionType.RANGE){
+                        AnswerQuestionResponse.CategoryItemInfo categoryItemInfo = AnswerQuestionResponse.CategoryItemInfo.builder()
+                                .id(question.getCategoryItem().getId())
+                                .multiple(question.getCategoryItem().getAnswerMultiple())
+                                .type(QuestionType.INPUT)
+                                .question(question.getCategoryItem().getAnswerQuestion())
+                                .negativeLabel(question.getCategoryItem().getAnswerNegativeLabel())
+                                .positiveLabel(question.getCategoryItem().getAnswerPositiveLabel())
+                                .exampleList(contents)
+                                .build();
 
-                    categoryItemInfoList.add(categoryItemInfo);
+                        categoryItemInfoList.add(categoryItemInfo);
+
+                    }else{
+                        AnswerQuestionResponse.CategoryItemInfo categoryItemInfo = AnswerQuestionResponse.CategoryItemInfo.builder()
+                                .id(question.getCategoryItem().getId())
+                                .multiple(question.getCategoryItem().getAnswerMultiple())
+                                .type(question.getCategoryItem().getType())
+                                .question(question.getCategoryItem().getAnswerQuestion())
+                                .negativeLabel(question.getCategoryItem().getAnswerNegativeLabel())
+                                .positiveLabel(question.getCategoryItem().getAnswerPositiveLabel())
+                                .exampleList(contents)
+                                .build();
+
+                        categoryItemInfoList.add(categoryItemInfo);
+                    }
                 }
             });
 

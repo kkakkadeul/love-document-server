@@ -1,6 +1,7 @@
 package com.example.lovedocumentbackend.domain.answer.service;
 
 import com.example.lovedocumentbackend.domain.answer.dto.request.AnswerRequest;
+import com.example.lovedocumentbackend.domain.answer.dto.response.AnswerResponse;
 import com.example.lovedocumentbackend.domain.answer.entity.*;
 import com.example.lovedocumentbackend.domain.answer.repository.*;
 import com.example.lovedocumentbackend.domain.category.entity.CategoryItem;
@@ -31,6 +32,7 @@ public class AnswerService {
     private final AnswerChoiceRepository answerChoiceRepository;
     private final AnswerScoreRepository answerScoreRepository;
     private final CategoryItemExampleRepository categoryItemExampleRepository;
+    private final MakeAnswerResponse makeAnswerResponse;
 
     @Transactional
     public void saveAnswer(AnswerRequest request){
@@ -50,11 +52,11 @@ public class AnswerService {
             CategoryItem categoryItem = categoryItemRepository.findById(answer.getCategoryItemId()).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_CATEGORY_ITEM));
             QuestionType questionType = answer.getQuestionType();
 
-            if (questionType == QuestionType.NUMBER) {
-                if(answer.getNumber() == null) throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_ANSWER);
+            if (questionType == QuestionType.INPUT) {
+                if(answer.getRangeList() == null |  answer.getRangeList().size() == 0) throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_ANSWER);
 
                 AnswerNumber answerNumber = AnswerNumber.builder()
-                        .number(answer.getNumber())
+                        .number(answer.getRangeList().get(0))
                         .categoryItem(categoryItem)
                         .answer(savedAnswer)
                         .build();
@@ -78,9 +80,9 @@ public class AnswerService {
                         .build();
                 answerScoreRepository.save(answerScore);
             }else if (questionType == QuestionType.CHOICE){
-                if(answer.getChoiceId()==null) throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_ANSWER);
+                if(answer.getChoiceIdList()==null | answer.getChoiceIdList().size()==0) throw new RestApiException(CommonErrorCode.INVALID_PARAMETER_ANSWER);
 
-                CategoryItemExample categoryItemExample = categoryItemExampleRepository.findById(answer.getChoiceId()).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_CATEGORY_ITEM_EXAMPLE));
+                CategoryItemExample categoryItemExample = categoryItemExampleRepository.findById(answer.getChoiceIdList().get(0)).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_CATEGORY_ITEM_EXAMPLE));
 
                 AnswerChoice answerChoice = AnswerChoice.builder()
                             .answer(savedAnswer)
@@ -94,5 +96,12 @@ public class AnswerService {
             }
 
         });
+    }
+
+    public AnswerResponse getAnswer(Long answerId, String nickname) {
+        Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_ANSWER));
+        QuestionGroup questionGroup = questionGroupRepository.findById(answer.getQuestionGroup().getId()).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
+
+        return makeAnswerResponse.getAnswerResponse(questionGroup, answer);
     }
 }

@@ -62,9 +62,11 @@ public class IdealService {
             categoryItemList.add(categoryItemRepository.findById(question.getCategoryItemId()).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_CATEGORY_ITEM)));
         });
 
-        List<IdealResponse> idealList = new ArrayList<>();
+//        List<IdealResponse> idealList = new ArrayList<>();
 
+        List<IdealResponse> idealList;
         if (idealOptional.isPresent()){
+            idealList = new ArrayList<>();
             idealOptional.ifPresent(ideal -> {
                 categoryList.forEach(category -> {
                     List<IdealResponse.IdealInfo> idealInfoList = new ArrayList<>();
@@ -88,28 +90,8 @@ public class IdealService {
                 });
             });
         } else{
-            categoryList.forEach(category -> {
-                List<IdealResponse.IdealInfo> idealInfoList = new ArrayList<>();
-
-                categoryItemList.forEach(categoryItem -> {
-                    if(Objects.equals(categoryItem.getCategory().getTitle(), category.getTitle())){
-                        IdealResponse.IdealInfo idealInfo = IdealResponse.IdealInfo.builder()
-                                .categoryTitle(categoryItem.getTitle())
-                                .ideal(null)
-                                .build();
-                        idealInfoList.add(idealInfo);
-                    }
-                });
-
-                IdealResponse idealResponse = IdealResponse.builder()
-                        .categoryTitle(category.getTitle())
-                        .idealInfoList(idealInfoList)
-                        .build();
-
-                idealList.add(idealResponse);
-            });
+            idealList = null;
         }
-
 
         return idealList;
     }

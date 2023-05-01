@@ -14,7 +14,7 @@ import com.example.lovedocumentbackend.domain.question.repository.QuestionReposi
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
 import com.example.lovedocumentbackend.enumclass.QuestionType;
 import com.example.lovedocumentbackend.exception.RestApiException;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,14 +37,18 @@ public class MakePercentage {
     private final IdealChoiceRepository idealChoiceRepository;
     private final AnswerChoiceRepository answerChoiceRepository;
 
-    public Integer getPercentage(QuestionGroup questionGroup, Answer answer){
+    public PercentageInfo getPercentage(QuestionGroup questionGroup, Answer answer){
         List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId());
         Optional<Ideal> optional = idealRepository.findByQuestionGroupId(questionGroup.getId());
         Ideal ideal;
-        if(optional.isEmpty()) return 0;
+        PercentageInfo percentageInfo = new PercentageInfo();
+        percentageInfo.setPercentage(0);
+        percentageInfo.setTotalCnt(questionList.size());
+        percentageInfo.setMatchCnt(0);
+        percentageInfo.setNonMatchCnt(questionList.size());
+
+        if(optional.isEmpty()) return percentageInfo;
         else ideal = optional.get();
-
-
 
         List<Integer> intList = new ArrayList<>();
         for (Question question : questionList) {
@@ -77,6 +81,21 @@ public class MakePercentage {
 
         }
 
-        return (int)Math.round(((double)intList.size()/(double)questionList.size()*100.0));
+        percentageInfo.setPercentage((int)Math.round(((double)intList.size()/(double)questionList.size()*100.0)));
+        percentageInfo.setMatchCnt(intList.size());
+        percentageInfo.setNonMatchCnt(questionList.size()-intList.size());
+        percentageInfo.setTotalCnt(questionList.size());
+
+        return percentageInfo;
+    }
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static public class PercentageInfo {
+        private Integer percentage;
+        private Integer totalCnt;
+        private Integer matchCnt;
+        private Integer nonMatchCnt;
     }
 }
