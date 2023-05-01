@@ -31,14 +31,14 @@ public class AnswerRequest {
         @Schema(description = "카테고리 아이템 아이디", example = "1")
         private Long categoryItemId;
 
-        @Schema(description = "카테고리 타입", example = "RANGE")
+        @Schema(description = "카테고리 타입", example = "INPUT")
         private QuestionType questionType;
 
-        @Schema(description = "객관식 선택 아이디", example = "1")
-        private Long choiceId;
+        @Schema(description = "객관식 선택 아이디 리스트", example = "[1]")
+        private List<Long> choiceIdList;
 
-        @Schema(description = "키값 입력", example = "170")
-        private Integer number;
+        @Schema(description = "키값 입력 리스트", example = "[170]")
+        private List<Integer> rangeList;
 
         @Schema(description = "점수", example = "4")
         private Integer score;

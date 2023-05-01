@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -30,5 +32,8 @@ public class UserAnswersResponse {
 
     @Schema(description = "일치 퍼센트", example = "70")
     private Integer percentage;
+
+    @Schema(description = "생성날짜", example = "2023-04-27 03:52:27")
+    private LocalDateTime dateTime;
 
 }

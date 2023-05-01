@@ -2,10 +2,7 @@ package com.example.lovedocumentbackend.domain.category.entity;
 
 
 import com.example.lovedocumentbackend.BaseEntity;
-import com.example.lovedocumentbackend.domain.answer.entity.AnswerChoice;
-import com.example.lovedocumentbackend.domain.answer.entity.AnswerNumber;
-import com.example.lovedocumentbackend.domain.answer.entity.AnswerScore;
-import com.example.lovedocumentbackend.domain.answer.entity.AnswerYn;
+import com.example.lovedocumentbackend.domain.answer.entity.*;
 import com.example.lovedocumentbackend.domain.ideal.entity.*;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.QuestionType;
@@ -89,5 +86,8 @@ public class CategoryItem extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryItem")
     private List<IdealChoice> idealChoiceList;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "categoryItem")
+    private CategoryItemAnswerResult categoryItemAnswerResult;
 
 }

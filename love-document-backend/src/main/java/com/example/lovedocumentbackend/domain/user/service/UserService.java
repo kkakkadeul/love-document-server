@@ -116,7 +116,6 @@ public class UserService {
 
             userCategoryResponseList.add(userCategoryResponse);
         });
-
         return userCategoryResponseList;
     }
 
@@ -131,10 +130,11 @@ public class UserService {
                userAnswersResponseList.add(UserAnswersResponse.builder()
                                .answerId(answer.getId())
                                .show(answer.getUserShow())
-                               .percentage(makePercentage.getPercentage(questionGroup, answer))
+                               .percentage(makePercentage.getPercentage(questionGroup, answer).getPercentage())
                                .age(answer.getAge())
                                .live(answer.getLive())
                                .nickname(answer.getNickname())
+                               .dateTime(answer.getCreateAt())
                        .build());
            });
        });
