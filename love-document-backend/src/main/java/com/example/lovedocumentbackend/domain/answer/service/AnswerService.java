@@ -99,7 +99,9 @@ public class AnswerService {
     }
 
     public AnswerResponse getAnswer(Long answerId, String nickname) {
-        Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_ANSWER));
+        Answer findAnswer = answerRepository.findById(answerId).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_ANSWER));
+        findAnswer.setUserShow(BooleanType.Y);
+        Answer answer = answerRepository.save(findAnswer);
         QuestionGroup questionGroup = questionGroupRepository.findById(answer.getQuestionGroup().getId()).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
 
         return makeAnswerResponse.getAnswerResponse(questionGroup, answer);

@@ -9,6 +9,7 @@ import com.example.lovedocumentbackend.domain.category.repository.CategoryReposi
 import com.example.lovedocumentbackend.domain.ideal.entity.*;
 import com.example.lovedocumentbackend.domain.ideal.repository.*;
 import com.example.lovedocumentbackend.domain.question.dto.response.AnswerQuestionResponse;
+import com.example.lovedocumentbackend.domain.question.dto.response.QuestionNicknameResponse;
 import com.example.lovedocumentbackend.domain.question.entity.Question;
 import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
 import com.example.lovedocumentbackend.domain.question.repository.QuestionRepository;
@@ -233,6 +234,15 @@ public class QuestionService {
         });
 
         return questionApiResponseList;
+    }
+
+    public QuestionNicknameResponse getQuestionNickname(Long questionId){
+        QuestionGroup questionGroup = questionGroupRepository.findById(questionId).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
+        User user = userRepository.findById(questionGroup.getUser().getId()).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
+
+        return QuestionNicknameResponse.builder()
+                .nickname(user.getNickname())
+                .build();
     }
 
     public List<AnswerQuestionResponse> getAnswer(Long questionId) {

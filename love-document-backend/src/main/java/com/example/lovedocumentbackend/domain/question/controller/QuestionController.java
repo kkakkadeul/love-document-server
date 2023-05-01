@@ -4,6 +4,7 @@ package com.example.lovedocumentbackend.domain.question.controller;
 import com.example.lovedocumentbackend.config.ApiDocumentResponse;
 import com.example.lovedocumentbackend.domain.question.dto.request.QuestionRequest;
 import com.example.lovedocumentbackend.domain.question.dto.response.AnswerQuestionResponse;
+import com.example.lovedocumentbackend.domain.question.dto.response.QuestionNicknameResponse;
 import com.example.lovedocumentbackend.domain.question.dto.response.QuestionResponse;
 import com.example.lovedocumentbackend.domain.question.service.QuestionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,6 +38,15 @@ public class QuestionController {
     @GetMapping("{questionId}")
     public ResponseEntity<List<AnswerQuestionResponse>> getAnswerQuestion(@PathVariable Long questionId) {
         return new ResponseEntity<>(questionApiLogicService.getAnswer(questionId), HttpStatus.OK);
+    }
+    @ApiDocumentResponse
+    @Operation(summary = "답변자 질문지 조회", description = "답변자의 질문 목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = AnswerQuestionResponse.class)))}),
+    })
+    @GetMapping("{questionId}/nickname")
+    public ResponseEntity<QuestionNicknameResponse> getQuestionNickname(@PathVariable Long questionId) {
+        return new ResponseEntity<>(questionApiLogicService.getQuestionNickname(questionId), HttpStatus.OK);
     }
     @ApiDocumentResponse
     @Operation(summary = "유저 질문지 조회", description = "유저가 선택한 카테고리의 질문지 조회")
