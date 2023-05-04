@@ -5,7 +5,7 @@ import com.example.lovedocumentbackend.config.ApiDocumentResponse;
 import com.example.lovedocumentbackend.domain.question.dto.request.QuestionRequest;
 import com.example.lovedocumentbackend.domain.question.dto.response.AnswerQuestionResponse;
 import com.example.lovedocumentbackend.domain.question.dto.response.QuestionNicknameResponse;
-import com.example.lovedocumentbackend.domain.question.dto.response.QuestionResponse;
+import com.example.lovedocumentbackend.domain.question.dto.response.IdealQuestionResponse;
 import com.example.lovedocumentbackend.domain.question.service.QuestionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -42,7 +42,7 @@ public class QuestionController {
     @ApiDocumentResponse
     @Operation(summary = "질문자 닉네임 조회", description = "질문지를 생성한 사람의 닉네임 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = QuestionNicknameResponse.class)))}),
+            @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = QuestionNicknameResponse.class))),
     })
     @GetMapping("{questionId}/nickname")
     public ResponseEntity<QuestionNicknameResponse> getQuestionNickname(@PathVariable Long questionId) {
@@ -51,10 +51,10 @@ public class QuestionController {
     @ApiDocumentResponse
     @Operation(summary = "유저 질문지 조회", description = "유저가 선택한 카테고리의 질문지 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = QuestionResponse.class)))}),
+            @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = IdealQuestionResponse.class)))}),
     })
     @GetMapping("")
-    public ResponseEntity<List<QuestionResponse>> getIdealQuestion(Authentication authentication) {
+    public ResponseEntity<List<IdealQuestionResponse>> getIdealQuestion(Authentication authentication) {
         return new ResponseEntity<>(questionApiLogicService.getIdeal(authentication.getName()), HttpStatus.OK);
     }
 

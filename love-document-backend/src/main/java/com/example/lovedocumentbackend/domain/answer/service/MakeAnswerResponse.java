@@ -41,7 +41,7 @@ public class MakeAnswerResponse {
 
     public AnswerResponse getAnswerResponse(QuestionGroup questionGroup, Answer answer){
         List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId());
-        Optional<Ideal> optional = idealRepository.findByQuestionGroupId(questionGroup.getId());
+        Optional<Ideal> optional = idealRepository.findTopByQuestionGroupIdOrderByCreatedAtDesc(questionGroup.getId());
         Set<Category> categoryList = questionList.stream()
                 .map(Question::getCategory)
                 .collect(Collectors.toSet());
@@ -53,7 +53,7 @@ public class MakeAnswerResponse {
             answerResponse.setNickname(answer.getNickname());
             answerResponse.setLive(answer.getLive());
             answerResponse.setWork(answer.getWork());
-            answerResponse.setDateTime(answer.getCreateAt());
+            answerResponse.setDateTime(answer.getCreatedAt());
 
             answerResponse.setPercentage(0);
             answerResponse.setTotalCnt(questionList.size());
@@ -100,7 +100,7 @@ public class MakeAnswerResponse {
             answerResponse.setNickname(answer.getNickname());
             answerResponse.setLive(answer.getLive());
             answerResponse.setWork(answer.getWork());
-            answerResponse.setDateTime(answer.getCreateAt());
+            answerResponse.setDateTime(answer.getCreatedAt());
 
             categoryList.forEach(category -> {
                 List<AnswerResponse.Item> itemList = new ArrayList<>();

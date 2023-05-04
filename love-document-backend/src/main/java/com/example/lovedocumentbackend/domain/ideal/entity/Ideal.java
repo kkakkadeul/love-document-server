@@ -2,6 +2,7 @@ package com.example.lovedocumentbackend.domain.ideal.entity;
 
 import com.example.lovedocumentbackend.BaseEntity;
 import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
+import com.example.lovedocumentbackend.enumclass.BooleanType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,19 +21,23 @@ public class Ideal extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "question_group_id")
     private QuestionGroup questionGroup;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal", orphanRemoval = true)
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private BooleanType status;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal")
     private List<IdealYn> idealYnList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal")
     private List<IdealRange> idealRangeList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal")
     private List<IdealScore> idealScoreList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ideal")
     private List<IdealChoice> idealChoiceList;
 }

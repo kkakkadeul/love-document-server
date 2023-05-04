@@ -46,11 +46,10 @@ public class IdealService {
 
     // 유저 답안 불러오기
     public List<IdealResponse> userIdeal(String nickname){
-
         // 유저의 questionGroup 찾기
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
         QuestionGroup userQuestionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
-        Optional<Ideal> idealOptional = idealRepository.findByQuestionGroupId(userQuestionGroup.getId());
+        Optional<Ideal> idealOptional = idealRepository.findByQuestionGroupIdAndStatus(userQuestionGroup.getId(), BooleanType.Y);
         List<Question> questionList = questionRepository.findAllByQuestionGroupId(userQuestionGroup.getId());
 
         List<CategoryItem> categoryItemList = new ArrayList<>();
@@ -58,11 +57,10 @@ public class IdealService {
                 .map(Question::getCategory)
                 .collect(Collectors.toSet());
 
+
         questionList.forEach(question -> {
             categoryItemList.add(categoryItemRepository.findById(question.getCategoryItemId()).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_CATEGORY_ITEM)));
         });
-
-//        List<IdealResponse> idealList = new ArrayList<>();
 
         List<IdealResponse> idealList;
         if (idealOptional.isPresent()){
@@ -98,25 +96,38 @@ public class IdealService {
     }
 
     // 유저 답안 저장 로직
+
     @Transactional
     public void saveIdeal(String nickname, IdealRequest request){
         // 유저의 QuestionGroup 찾기
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
         QuestionGroup userQuestionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
-        Optional<Ideal> optional = idealRepository.findByQuestionGroupId(userQuestionGroup.getId());
+        Optional<Ideal> optional = idealRepository.findByQuestionGroupIdAndStatus(userQuestionGroup.getId(), BooleanType.Y);
 
-//        optional.ifPresent(idealRepository::delete);
+        optional.ifPresentOrElse(
+                beforeIdeal -> {
+                    // 기존 ideal을 update
+                    beforeIdeal.setStatus(BooleanType.N);
+                    idealRepository.save(beforeIdeal);
 
-        if (optional.isPresent()){
-            throw new RestApiException(CommonErrorCode.AlREADY_IDEAL_REQUEST);
-        }
+                    Ideal newIdeal = Ideal.builder()
+                            .questionGroup(userQuestionGroup)
+                            .status(BooleanType.Y)
+                            .build();
+                    idealRepository.save(newIdeal);
+                },
+                () -> {
+                    // ideal을 새로 생성
+                    Ideal newIdeal = Ideal.builder()
+                            .questionGroup(userQuestionGroup)
+                            .status(BooleanType.Y)
+                            .build();
+                    idealRepository.save(newIdeal);
+                }
+        );
 
-        // questionGroup id로 ideal 생성
-        Ideal newIdeal = Ideal.builder()
-                .questionGroup(userQuestionGroup)
-                .build();
-
-        Ideal userIdeal = idealRepository.save(newIdeal);
+        Ideal userIdeal = idealRepository.findByQuestionGroupIdAndStatus(userQuestionGroup.getId(), BooleanType.Y)
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_FOUND_IDEAL));
 
         // 각 ideal 테이블의 위에서 만든 ideal 매핑해서 넣어줌
         request.getIdealList().forEach(ideal -> {
@@ -129,8 +140,8 @@ public class IdealService {
                 }
 
                 IdealRange idealRange = IdealRange.builder()
-                        .more(ideal.getRangeList().get(0))
-                        .less(ideal.getRangeList().get(1))
+                        .more(ideal.getRangeList().isEmpty() ? null : ideal.getRangeList().get(0))
+                        .less(ideal.getRangeList().isEmpty() ? null : ideal.getRangeList().get(1))
                         .categoryItem(categoryItem)
                         .ideal(userIdeal)
                         .build();

@@ -135,7 +135,7 @@ public class UserService {
                                .age(answer.getAge())
                                .live(answer.getLive())
                                .nickname(answer.getNickname())
-                               .dateTime(answer.getCreateAt())
+                               .dateTime(answer.getCreatedAt())
                        .build());
            });
        });
