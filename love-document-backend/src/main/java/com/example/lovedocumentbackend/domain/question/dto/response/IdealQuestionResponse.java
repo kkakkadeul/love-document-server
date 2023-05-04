@@ -3,8 +3,6 @@ package com.example.lovedocumentbackend.domain.question.dto.response;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.QuestionType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.util.List;
@@ -13,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionResponse {
+public class IdealQuestionResponse {
 
     @Schema(description = "카테고리 이모티콘", example = "\uD83D\uDC40")
     private String emoji;
@@ -34,11 +32,9 @@ public class QuestionResponse {
         private Long id;
 
         @Schema(description = "중복 정답 유무", example = "N")
-        @Enumerated(EnumType.STRING)
         private BooleanType multiple;
 
         @Schema(description = "질문 유형", example = "RANGE")
-        @Enumerated(EnumType.STRING)
         private QuestionType type;
 
         @Schema(description = "질문", example = "원하는 키는?")
@@ -53,17 +49,18 @@ public class QuestionResponse {
         @Schema(description = "객관식 답 예시 리스트")
         private List<Example> exampleList;
 
-        @Schema(description = "CHOICE id 리스트 or null", example = "[1, 2, 3]")
+        @Schema(description = "CHOICE id", example = "[1, 2, 3]")
         private List<Long> choiceIdList;
 
-        @Schema(description = "RANGE int 리스트 or null ", example = "[160, 180]")
+        @Schema(description = "RANGE", example = "[160, 180]")
         private List<Integer> rangeList;
 
-        @Schema(description = "SCORE 값 or null ", example = "3")
+        @Schema(description = "SCORE", example = "3")
         private Integer score;
 
-        @Schema(description = "YN 값 or null ", example = "Y")
+        @Schema(description = "YN", example = "Y")
         private BooleanType yn;
+
     }
 
     @Getter
@@ -76,5 +73,6 @@ public class QuestionResponse {
 
         @Schema(description = "객관식 예시", example = "기독교")
         private String content;
+
     }
 }

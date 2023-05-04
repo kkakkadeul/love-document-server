@@ -39,7 +39,7 @@ public class MakePercentage {
 
     public PercentageInfo getPercentage(QuestionGroup questionGroup, Answer answer){
         List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId());
-        Optional<Ideal> optional = idealRepository.findByQuestionGroupId(questionGroup.getId());
+        Optional<Ideal> optional = idealRepository.findTopByQuestionGroupIdOrderByCreatedAtDesc(questionGroup.getId());
         Ideal ideal;
         PercentageInfo percentageInfo = new PercentageInfo();
         percentageInfo.setPercentage(0);

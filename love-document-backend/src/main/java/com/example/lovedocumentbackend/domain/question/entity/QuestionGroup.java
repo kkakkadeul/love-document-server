@@ -35,8 +35,8 @@ public class QuestionGroup extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "questionGroup")
-    private Ideal ideal;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "questionGroup")
+    private List<Ideal> idealList;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "questionGroup")
     private List<Answer> answerList;

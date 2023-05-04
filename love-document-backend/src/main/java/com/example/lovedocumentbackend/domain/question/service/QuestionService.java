@@ -1,5 +1,6 @@
 package com.example.lovedocumentbackend.domain.question.service;
 
+import com.example.lovedocumentbackend.config.ApiDocumentResponse;
 import com.example.lovedocumentbackend.domain.category.entity.Category;
 import com.example.lovedocumentbackend.domain.category.entity.CategoryItem;
 import com.example.lovedocumentbackend.domain.category.entity.CategoryItemExample;
@@ -14,7 +15,7 @@ import com.example.lovedocumentbackend.domain.question.entity.Question;
 import com.example.lovedocumentbackend.domain.question.entity.QuestionGroup;
 import com.example.lovedocumentbackend.domain.question.repository.QuestionRepository;
 import com.example.lovedocumentbackend.domain.question.dto.request.QuestionRequest;
-import com.example.lovedocumentbackend.domain.question.dto.response.QuestionResponse;
+import com.example.lovedocumentbackend.domain.question.dto.response.IdealQuestionResponse;
 import com.example.lovedocumentbackend.enumclass.BooleanType;
 import com.example.lovedocumentbackend.enumclass.CommonErrorCode;
 import com.example.lovedocumentbackend.enumclass.QuestionType;
@@ -77,10 +78,11 @@ public class QuestionService {
         });
     }
 
-    public List<QuestionResponse> getIdeal(String nickname) {
+    public List<IdealQuestionResponse> getIdeal(String nickname) {
+        System.out.println("조회");
         User user = userRepository.findByNickname(nickname).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_USER));
         QuestionGroup questionGroup = questionGroupRepository.findByUserIdAndStatus(user.getId(), BooleanType.Y).orElseThrow(()-> new RestApiException(CommonErrorCode.NOT_FOUND_QUESTION));
-        Optional<Ideal> ideal = idealRepository.findByQuestionGroupId(questionGroup.getId());
+        Optional<Ideal> ideal = idealRepository.findByQuestionGroupIdAndStatus(questionGroup.getId(), BooleanType.Y);
         List<Question> questionList = questionRepository.findAllByQuestionGroupId(questionGroup.getId());
         Set<Category> categoryList = questionList.stream()
                 .map(Question::getCategory)
@@ -89,19 +91,19 @@ public class QuestionService {
         return toResponse(questionList, categoryList,ideal);
     }
 
-    private List<QuestionResponse> toResponse(List<Question> questionList, Set<Category> categoryList, Optional<Ideal> ideal) {
-        List<QuestionResponse> questionApiResponseList = new ArrayList<>();
+    private List<IdealQuestionResponse> toResponse(List<Question> questionList, Set<Category> categoryList, Optional<Ideal> ideal) {
+        List<IdealQuestionResponse> questionApiResponseList = new ArrayList<>();
 
         categoryList.forEach(category -> {
-            List<QuestionResponse.CategoryItemInfo> categoryItemInfoList = new ArrayList<>();
+            List<IdealQuestionResponse.CategoryItemInfo> categoryItemInfoList = new ArrayList<>();
 
             questionList.forEach(question -> {
                 if (Objects.equals(category.getId(), question.getCategoryId())){
                     List<CategoryItemExample> categoryItemExampleList = categoryItemExampleRepository.findAllByCategoryItemId(question.getCategoryItemId());
 
-                    List<QuestionResponse.Example> contents = categoryItemExampleList.stream()
+                    List<IdealQuestionResponse.Example> contents = categoryItemExampleList.stream()
                             .map(CategoryItemExample -> {
-                                return QuestionResponse.Example.builder()
+                                return IdealQuestionResponse.Example.builder()
                                         .id(CategoryItemExample.getId())
                                         .content(CategoryItemExample.getContent())
                                         .build();
@@ -119,7 +121,7 @@ public class QuestionService {
                             idealYn.ifPresent(yn -> {
                                 ynBoolList.add(yn.getContent());
                             });
-                            QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                            IdealQuestionResponse.CategoryItemInfo categoryItemInfo = IdealQuestionResponse.CategoryItemInfo.builder()
                                     .id(question.getCategoryItem().getId())
                                     .multiple(question.getCategoryItem().getIdealMultiple())
                                     .type(question.getCategoryItem().getType())
@@ -141,7 +143,7 @@ public class QuestionService {
                                 rangeNumList.add(range.getMore());
                                 rangeNumList.add(range.getLess());
                             });
-                            QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                            IdealQuestionResponse.CategoryItemInfo categoryItemInfo = IdealQuestionResponse.CategoryItemInfo.builder()
                                     .id(question.getCategoryItem().getId())
                                     .multiple(question.getCategoryItem().getIdealMultiple())
                                     .type(question.getCategoryItem().getType())
@@ -163,7 +165,7 @@ public class QuestionService {
                                 scoreNumList.add(score.getScore());
                             });
 
-                            QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                            IdealQuestionResponse.CategoryItemInfo categoryItemInfo = IdealQuestionResponse.CategoryItemInfo.builder()
                                     .id(question.getCategoryItem().getId())
                                     .multiple(question.getCategoryItem().getIdealMultiple())
                                     .type(question.getCategoryItem().getType())
@@ -187,7 +189,7 @@ public class QuestionService {
                                 });
                             });
 
-                            QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                            IdealQuestionResponse.CategoryItemInfo categoryItemInfo = IdealQuestionResponse.CategoryItemInfo.builder()
                                     .id(question.getCategoryItem().getId())
                                     .multiple(question.getCategoryItem().getIdealMultiple())
                                     .type(question.getCategoryItem().getType())
@@ -206,7 +208,7 @@ public class QuestionService {
                     });
 
                     if(ideal.isEmpty()){
-                        QuestionResponse.CategoryItemInfo categoryItemInfo = QuestionResponse.CategoryItemInfo.builder()
+                        IdealQuestionResponse.CategoryItemInfo categoryItemInfo = IdealQuestionResponse.CategoryItemInfo.builder()
                             .id(question.getCategoryItem().getId())
                             .multiple(question.getCategoryItem().getIdealMultiple())
                             .type(question.getCategoryItem().getType())
@@ -225,7 +227,7 @@ public class QuestionService {
                 }
             });
 
-            QuestionResponse questionApiResponse = QuestionResponse.builder()
+            IdealQuestionResponse questionApiResponse = IdealQuestionResponse.builder()
                     .emoji(category.getEmoji())
                     .categoryTitle(category.getTitle())
                     .categoryItemInfoList(categoryItemInfoList)

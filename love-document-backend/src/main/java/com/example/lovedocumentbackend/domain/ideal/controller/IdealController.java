@@ -52,7 +52,12 @@ public class IdealController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // PATCH : 답안 정보 수정. 현재 없음
+    // PATCH : 답안 정보 수정
+//    @PatchMapping("")
+//    public ResponseEntity<Void> patchIdeal(Authentication authentication, @RequestBody IdealRequest request){
+//        idealService.saveIdeal(authentication.getName(), request);
+//
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
-    // DELETE : 답안 정보 삭제. 현재 없음
 }
